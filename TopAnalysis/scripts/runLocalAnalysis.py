@@ -70,7 +70,7 @@ def main():
         inF=opt.input
         if '/store/' in inF and not 'root:' in inF : inF='root://eoscms//eos/cms'+opt.input        
         outF=opt.output
-        wgt=None
+        wgtH=None
         if opt.tag :
             if opt.tag in genWgts:
                 wgtH=genWgts[opt.tag]
