@@ -290,6 +290,16 @@ void RunTop16006(TString filename,
       met.SetPz(0.); met.SetE(met.Pt());
       //float mt( computeMT(isZ ? dilp4: lp4,met) );
 
+      // Charm resonance stuff:
+      float maxcsv(-1.);
+      int maxind(-1);
+      for(int k = 0; k < ev.nj; k++)
+        if(ev.j_csv[k] >= maxcsv) {
+          maxcsv = ev.j_csv[k];
+          maxind = k;
+        }
+      int jetindex = maxind;
+
       //simple fill
       if(tightLeptonsIso.size() == 1 && bJets.size()+lightJets.size() >= 4) {
         allPlots["nj"]->Fill(lightJets.size(),1);
@@ -300,7 +310,7 @@ void RunTop16006(TString filename,
           allPlots["j_pt"]->Fill(it.Pt(),1);
         for (auto it : bJets)
           allPlots["bj_pt"]->Fill(it.Pt(),1);
-        int nstart = firstTrackIndex(ev.j_csv[0]);
+        int nstart = firstTrackIndex(maxind);
         allPlots["nstart"]->Fill(nstart,1);
         allPlots["pfid"]->Fill(ev.pf_id[nstart],1);
         TLorentzVector p_track1, p_track2;
@@ -325,7 +335,7 @@ void RunTop16006(TString filename,
 
             //looking for lepton
             for(int tk3 = 0; tk3 < ev.npf; tk3++) {
-              if(ev.pf_id[tk3] != ev.j_csv[0]) continue;
+              if(ev.pf_id[tk3] != jetindex) continue;
               if(tk3 == tk1) continue;
               if(tk3 == tk2) continue;
             
@@ -346,7 +356,7 @@ void RunTop16006(TString filename,
             /*
             //looking for pion
             for(int tk3 = 0; tk3 < ev.npf; tk3++) {
-              if(ev.pf_id[tk3] != ev.j_csv[0]) continue;
+              if(ev.pf_id[tk3] != jetindex) continue;
               if(tk3 == tk1) continue;
               if(tk3 == tk2) continue;
 
