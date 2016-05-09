@@ -45,6 +45,8 @@ void RunTop16006(TString filename,
 {
 
   //bool isTTbar( filename.Contains("_TTJets") );
+  bool singleLep(false);
+  bool doubleLep(false);
   
   //READ TREE FROM FILE
   MiniEvent_t ev;
@@ -306,7 +308,8 @@ void RunTop16006(TString filename,
       int jetindex = maxind;
 
       //simple fill
-      if(tightLeptonsIso.size() == 1 && bJets.size()+lightJets.size() >= 4) {
+      if(tightLeptonsIso.size() == 1 && bJets.size() > 0 && lightJets.size() >= 4) {
+        singleLep = true;
         allPlots["nj"]->Fill(lightJets.size(),1);
         allPlots["nbj"]->Fill(bJets.size(),1);
         allPlots["nlp"]->Fill(tightLeptonsIso.size(),1);
@@ -316,9 +319,10 @@ void RunTop16006(TString filename,
         for (auto it : bJets)
           allPlots["bj_pt"]->Fill(it.Pt(),1);
       }
-      else if(tightLeptonsIso.size() == 2 && bJets.size()+lightJets.size() >= 2) {
+      else if(tightLeptonsIso.size() == 2 && bJets.size() > 0 && lightJets.size() >= 2) {
         if(isZ) continue;
         if(ev.l_id[tightLeptonsIso[0]]==ev.l_id[tightLeptonsIso[1]] && met.Pt() < 40) continue;
+        doublLep = true;
         allPlots["nj"]->Fill(lightJets.size(),1);
         allPlots["nbj"]->Fill(bJets.size(),1);
         allPlots["ndilp"]->Fill(tightLeptonsIso.size(),1);
@@ -331,6 +335,7 @@ void RunTop16006(TString filename,
       }
 
 
+      if(!singleLep && !doubleLep) continue;
       TLorentzVector p_track1, p_track2;
       const float gMassMu = 0.1057;
       int nstart = firstTrackIndex(maxind);
