@@ -322,7 +322,7 @@ void RunTop16006(TString filename,
       else if(tightLeptonsIso.size() == 2 && bJets.size() > 0 && lightJets.size() >= 2) {
         if(isZ) continue;
         if(ev.l_id[tightLeptonsIso[0]]==ev.l_id[tightLeptonsIso[1]] && met.Pt() < 40) continue;
-        doublLep = true;
+        doubleLep = true;
         allPlots["nj"]->Fill(lightJets.size(),1);
         allPlots["nbj"]->Fill(bJets.size(),1);
         allPlots["ndilp"]->Fill(tightLeptonsIso.size(),1);
