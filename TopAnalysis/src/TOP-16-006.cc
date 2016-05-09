@@ -45,6 +45,7 @@ void RunTop16006(TString filename,
 {
 
   //bool isTTbar( filename.Contains("_TTJets") );
+  bool debug(false);
   bool singleLep(false);
   bool doubleLep(false);
   
@@ -108,6 +109,7 @@ void RunTop16006(TString filename,
   allPlots["nbj"]     = new TH1F("nbj",";N_{b-jets};Events" ,3,0.,5.);
   allPlots["nstart"]     = new TH1F("nstart",";N_{start};Events" ,3,0.,5.);
   allPlots["pfid"]     = new TH1F("pfid",";PFID;Events" ,440,-220.,220.);
+/*
   allPlots["massJPsi"]     = new TH1F("massJPsi",";M_{J/#Psi};Events" ,20,2.,4.);
   allPlots["massD0"]     = new TH1F("massD0",";M_{jj};Events" ,20,1.,3.);
   allPlots["masslep"]     = new TH1F("masslep",";M_{K#pi};Events" ,20,0.,10.);
@@ -116,6 +118,15 @@ void RunTop16006(TString filename,
   allPlots["massDsmD0loose"]     = new TH1F("massDsmD0loose",";M_{K#pi};Events" ,20,1.,3.);
   allPlots["massDsmD0"]     = new TH1F("massDsmD0",";M_{K#pi};Events" ,20,1.,3.);
   allPlots["massDs"]     = new TH1F("massDs",";M_{D^{*}};Events" ,20,0.,20.);
+*/
+  allPlots["massJPsi"]     = new TH1F("massJPsi",";M_{J/#Psi};Events" ,20,0.,20.);
+  allPlots["massD0"]     = new TH1F("massD0",";M_{jj};Events" ,20,1.,3.);
+  allPlots["masslep"]     = new TH1F("masslep",";M_{K#pi};Events" ,20,0.,20.);
+  allPlots["massmu"]     = new TH1F("massmu",";M_{K#pi};Events" ,20,0.,20.);
+  allPlots["masse"]     = new TH1F("masse",";M_{K#pi};Events" ,20,0.,20.);
+  allPlots["massDsmD0loose"]     = new TH1F("massDsmD0loose",";M_{K#pi};Events" ,20,0.,60.);
+  allPlots["massDsmD0"]     = new TH1F("massDsmD0",";M_{K#pi};Events" ,50,0.,60.);
+  allPlots["massDs"]     = new TH1F("massDs",";M_{D^{*}};Events" ,50,0.,60.);
   allPlots["pi_pt"] = new TH1F("pi_pt",";#pi^{#pm} P_{T} [GeV];Events", 20, 0,300);
 
 
@@ -308,6 +319,7 @@ void RunTop16006(TString filename,
       int jetindex = maxind;
 
       //simple fill
+      if(debug) cout << "starting simple plots" << endl;
       if(tightLeptonsIso.size() == 1 && bJets.size() > 0 && lightJets.size() >= 4) {
         singleLep = true;
         allPlots["nj"]->Fill(lightJets.size(),1);
@@ -321,7 +333,7 @@ void RunTop16006(TString filename,
       }
       else if(tightLeptonsIso.size() == 2 && bJets.size() > 0 && lightJets.size() >= 2) {
         if(isZ) continue;
-        if(ev.l_id[tightLeptonsIso[0]]==ev.l_id[tightLeptonsIso[1]] && met.Pt() < 40) continue;
+        if(ev.l_id[tightLeptonsIso[0]]==ev.l_id[tightLeptonsIso[1]] || met.Pt() < 40) continue;
         doubleLep = true;
         allPlots["nj"]->Fill(lightJets.size(),1);
         allPlots["nbj"]->Fill(bJets.size(),1);
@@ -333,9 +345,11 @@ void RunTop16006(TString filename,
         for (auto it : bJets)
           allPlots["bj_pt"]->Fill(it.Pt(),1);
       }
+      if(debug) cout << "simple plots DONE" << endl;
 
 
       if(!singleLep && !doubleLep) continue;
+      if(debug) cout << "l or ll" << endl;
       TLorentzVector p_track1, p_track2;
       const float gMassMu = 0.1057;
       int nstart = firstTrackIndex(maxind);
@@ -343,6 +357,7 @@ void RunTop16006(TString filename,
       allPlots["pfid"]->Fill(ev.pf_id[nstart],1);
 
       //J/Psi
+      if(debug) cout << "starting J/Psi" << endl;
       for(int i = 0; i < ev.npf; i++) {
         if(ev.pf_j[i] != jetindex) continue;
         if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
@@ -350,17 +365,19 @@ void RunTop16006(TString filename,
           if(ev.pf_id[i]*ev.pf_id[j] > 0) continue; // e^+e^- or mu^+mu^-
 
           float trackmass = gMassMu;
-          if(abs(pow(ev.pf_id[j],2)) == 121) trackmass = 0.;
+          if(abs(ev.pf_id[j]*ev.pf_id[j]) == 121) trackmass = 0.;
           p_track1.SetPtEtaPhiM(ev.pf_pt[i], ev.pf_eta[i], ev.pf_phi[i], trackmass);
           p_track2.SetPtEtaPhiM(ev.pf_pt[j], ev.pf_eta[j], ev.pf_phi[j], trackmass);
 
           float mass12 = (p_track1+p_track2).M();
-          if(mass12>2.5 && mass12<3.5)
+          //if(mass12>2.5 && mass12<3.5)
             allPlots["massJPsi"]->Fill(mass12,1);
         }
       }
+      if(debug) cout << "J/Psi DONE" << endl;
 
-      //D0 and D*
+      //D0 and D* 
+      if(debug) cout << "Starting D0 and D*" << endl;
       for(int i = nstart; i < nstart+3; i++)
         for(int j = i+1; j < 3; j++) {
           int tk1 = i;
@@ -376,10 +393,11 @@ void RunTop16006(TString filename,
           p_track2.SetPtEtaPhiM(ev.pf_pt[tk2], ev.pf_eta[tk2], ev.pf_phi[tk2], gMassK);
           float mass12 = (p_track1+p_track2).M();
 
-          if (mass12>1.65 && mass12<2.0)
+          //if (mass12>1.65 && mass12<2.0)
             allPlots["massD0"]->Fill(mass12,1);
 
           //looking for lepton
+          if(debug) cout << "third lepton" << endl;
           for(int tk3 = 0; tk3 < ev.npf; tk3++) {
             if(ev.pf_j[tk3] != jetindex) continue;
             if(tk3 == tk1) continue;
@@ -400,6 +418,7 @@ void RunTop16006(TString filename,
             }
           }
           //looking for pion
+          if(debug) cout << "D*->pi+D0" << endl;
           for(int tk3 = 0; tk3 < ev.npf; tk3++) {
             if(ev.pf_j[tk3] != jetindex) continue;
             if(tk3 == tk1) continue;
@@ -435,6 +454,7 @@ void RunTop16006(TString filename,
             }
           }
         }
+      if(debug) cout << "D0 and D* DONE" << endl;
 
     }
 

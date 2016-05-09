@@ -29,7 +29,7 @@ if [[ "${mass}" == "" ]]; then mass=0; fi
 
 queue=8nh
 eosdir=/store/cmst3/user/psilva/LJets2015/076fb7a
-outdir=~/work/LJets2015-arcrev
+outdir=/afs/cern.ch/work/b/byates/LJets2015
 wwwdir=~/www/LJets2015-arcrev
 lumi=2267.84
 
