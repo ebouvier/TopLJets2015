@@ -45,7 +45,7 @@ void RunTop16006(TString filename,
 {
 
   //bool isTTbar( filename.Contains("_TTJets") );
-  bool debug(false);
+  bool debug(true);
   bool singleLep(false);
   bool doubleLep(false);
   
@@ -130,6 +130,8 @@ void RunTop16006(TString filename,
   allPlots["pi_pt"] = new TH1F("pi_pt",";#pi^{#pm} P_{T} [GeV];Events", 20, 0,300);
 
 
+  for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
+  //for (auto& it : all2dPlots) { it.second->Sumw2(); it.second->SetDirectory(0); }
   //LOOP OVER EVENTS
   for (Int_t iev=0;iev<nentries;iev++)
     {
@@ -468,9 +470,14 @@ void RunTop16006(TString filename,
   TString dirName=gSystem->DirName(outname);
   TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
   fOut->cd();
+  if(debug) cout << "writing histograms" << endl;
   for (auto& it : allPlots)  { 
+    if(debug) cout << it.second->GetName() << endl;
+    if(debug) cout << it.second->GetEntries() << endl;
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
+  if(debug) cout << "writing histograms DONE" << endl;
+  if(debug) cout << "closing ROOT file" << endl;
   fOut->Close();
 }
 
