@@ -13,7 +13,7 @@
 #pragma link off all typedef;
 #pragma link off all enum;
 
-#pragma link C++ function RunTop16006;
+#pragma link C++ function Top16006;
 #pragma link C++ function RunOverSamples;
 #pragma link C++ defined_in "src/TopAnalysisLinkDef.h";
 #pragma link C++ function attachToMiniEventTree;

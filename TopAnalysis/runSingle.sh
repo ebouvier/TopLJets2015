@@ -1,0 +1,1 @@
+python scripts/runLocalAnalysis.py -i /store/cmst3/user/psilva/LJets2015/076fb7a/Data13TeV_SingleMuon_2015C/MergedMiniEvents_0.root -o SingleMu.root --ch 13 --charge 1 --tag Data13TeV_SingleMuon_2015C > log 2> log_err &

@@ -1,0 +1,31 @@
+Name collision between dumb dumb
+Name collision between ansi ansi
+Name collision between vt102 vt102
+Name collision between vt100 vt100
+Name collision between vt220 vt220
+Name collision between vt52 vt52
+Name collision between vt100-nav vt100-nav
+Name collision between linux linux
+Info in <TUnixSystem::ACLiC>: creating shared library /afs/cern.ch/user/b/byates/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/./src/TOPWidth_cc.so
+In file included from /cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/FWCore/MessageLogger/interface/MessageLogger.h:134:0,
+                 from /cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/CondFormats/JetMETObjects/interface/JetCorrectorParameters.h:17,
+                 from /afs/cern.ch/user/b/byates/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/CommonTools.h:6,
+                 from /afs/cern.ch/user/b/byates/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/interface/TOP-16-006.h:12,
+                 from /afs/cern.ch/user/b/byates/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/././src/TOPWidth.cc:11,
+                 from /afs/cern.ch/user/b/byates/CMSSW_7_6_3/src/TopLJets2015/TopAnalysis/./src/TOPWidth_cc_ACLiC_dict.cxx:41:
+/cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/FWCore/MessageLogger/interface/MessageDrop.h:109:38: warning: 'cms::thread_safe' scoped attribute directive ignored [-Wattributes]
+   CMS_THREAD_SAFE static std::string jobMode;     // change log 6
+                                      ^
+/cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/FWCore/MessageLogger/interface/MessageDrop.h:110:40: warning: 'cms::thread_safe' scoped attribute directive ignored [-Wattributes]
+   CMS_THREAD_SAFE static unsigned char messageLoggerScribeIsRunning; // change log 7
+                                        ^
+/cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/FWCore/MessageLogger/interface/MessageDrop.h:111:31: warning: 'cms::thread_safe' scoped attribute directive ignored [-Wattributes]
+   CMS_THREAD_SAFE static bool debugAlwaysSuppressed;   // change log 9
+                               ^
+/cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/FWCore/MessageLogger/interface/MessageDrop.h:112:31: warning: 'cms::thread_safe' scoped attribute directive ignored [-Wattributes]
+   CMS_THREAD_SAFE static bool infoAlwaysSuppressed;   // change log 9
+                               ^
+/cvmfs/cms.cern.ch/slc6_amd64_gcc493/cms/cmssw/CMSSW_7_6_3/src/FWCore/MessageLogger/interface/MessageDrop.h:113:31: warning: 'cms::thread_safe' scoped attribute directive ignored [-Wattributes]
+   CMS_THREAD_SAFE static bool warningAlwaysSuppressed;   // change log 9
+                               ^
+mkdir: cannot create directory `/afs/cern.ch/user/b/byates/eos/cms/store/user/byates/LJets2015/skim': File exists

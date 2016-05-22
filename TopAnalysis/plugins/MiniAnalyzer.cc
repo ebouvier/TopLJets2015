@@ -80,12 +80,13 @@ using namespace pat;
 // class declaration
 //
 
-class MiniAnalyzer : public edm::EDAnalyzer {
+class MiniAnalyzer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 public:
   explicit MiniAnalyzer(const edm::ParameterSet&);
-  ~MiniAnalyzer();  
+  ~MiniAnalyzer();
+  virtual void endRun(const edm::Run & iRun, edm::EventSetup const & iSetup);
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
-  virtual void endRun(const edm::Run&,const edm::EventSetup&);  
+
 private:
   virtual void beginJob() override;
   void genAnalysis(const edm::Event& iEvent, const edm::EventSetup& iSetup);
@@ -148,7 +149,7 @@ private:
 //
 // constructors and destructor
 //
-MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig) :
+MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig) :  
   generatorToken_(consumes<GenEventInfoProduct>(edm::InputTag("generator"))),
   generatorevtToken_(consumes<GenEventInfoProduct>(edm::InputTag("generator",""))),
   generatorlheToken_(consumes<LHEEventProduct>(edm::InputTag("externalLHEProducer",""))),
@@ -159,6 +160,8 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig) :
   genParticlesToken_(consumes<pat::PackedGenParticleCollection>(edm::InputTag("packedGenParticles"))),
   prunedGenParticlesToken_(consumes<reco::GenParticleCollection>(edm::InputTag("prunedGenParticles"))),
   pseudoTopToken_(consumes<reco::GenParticleCollection>(edm::InputTag("pseudoTop"))),
+
+
   triggerBits_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerBits"))),
   triggerPrescales_(consumes<pat::PackedTriggerPrescales>(iConfig.getParameter<edm::InputTag>("prescales"))),
   vtxToken_(consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"))),
@@ -179,7 +182,7 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig) :
   elTriggersToUse_ = iConfig.getParameter<std::vector<std::string> >("elTriggersToUse");
   muTriggersToUse_ = iConfig.getParameter<std::vector<std::string> >("muTriggersToUse");
 
-  //  usesResource("TFileService");
+  usesResource("TFileService");
 
   for(Int_t igenjet=0; igenjet<5; igenjet++)
     {
@@ -683,19 +686,16 @@ MiniAnalyzer::beginJob(){
 }
 
 //
-void 
-MiniAnalyzer::endRun(const edm::Run& iRun,
-		     const EventSetup& iSetup) 
+void
+MiniAnalyzer::endRun(const edm::Run & iRun, edm::EventSetup const & iSetup)
 {
   try{
-
-    cout << "[MiniAnalyzer::endRun]" << endl;
     
     edm::Handle<LHERunInfoProduct> lheruninfo;
     typedef std::vector<LHERunInfoProduct::Header>::const_iterator headers_const_iterator;
     iRun.getByToken(generatorRunInfoToken_, lheruninfo );
     //iRun.getByLabel( "externalLHEProducer", lheruninfo );
-
+    
     LHERunInfoProduct myLHERunInfoProduct = *(lheruninfo.product());
     for (headers_const_iterator iter=myLHERunInfoProduct.headers_begin(); 
 	 iter!=myLHERunInfoProduct.headers_end(); 
@@ -714,10 +714,7 @@ MiniAnalyzer::endRun(const edm::Run& iRun,
 	  }
 	
 	if(histContainer_.find(tag)==histContainer_.end()) 
-	  {
-	    std::cout << "Starting histo for " << tag << std::endl;
-	    histContainer_[tag]=fs->make<TH1F>(tag.c_str(),tag.c_str(),prunedLines.size(),0,prunedLines.size());
-	  }
+	  histContainer_[tag]=fs->make<TH1F>(tag.c_str(),tag.c_str(),prunedLines.size(),0,prunedLines.size());
 	for (unsigned int iLine = 0; iLine<prunedLines.size(); iLine++) 
 	  histContainer_[tag]->GetXaxis()->SetBinLabel(iLine+1,prunedLines.at(iLine).c_str());  
       }
@@ -803,7 +800,6 @@ float MiniAnalyzer::getMiniIsolation(edm::Handle<pat::PackedCandidateCollection>
 void 
 MiniAnalyzer::endJob() 
 {
-  std::cout << "[MiniAnalyzer::endJob]" << endl;
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------

@@ -31,11 +31,7 @@ def main():
         for f in os.listdir('eos/cms/%s/%s' % (opt.inDir,sample ) ):
             fIn=ROOT.TFile.Open('eos/cms/%s/%s/%s' % (opt.inDir,sample,f ) )
             if wgtCounter is None:
-                try:
-                    wgtCounter=fIn.Get('analysis/fidcounter0').Clone('genwgts')
-                except:
-                    print 'Check eos/cms/%s/%s/%s probably corrupted?' % (opt.inDir,sample,f )
-                    continue
+                wgtCounter=fIn.Get('analysis/fidcounter0').Clone('genwgts')
                 wgtCounter.SetDirectory(0)
                 wgtCounter.Reset('ICE')
                 labelH=fIn.Get('analysis/generator_initrwgt')

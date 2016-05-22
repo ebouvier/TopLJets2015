@@ -11,15 +11,16 @@ Wrapper to be used when run in parallel
 """
 def RunMethodPacked(args):
 
-    method,inF,outF,channel,charge,wgtH,flav,runSysts=args
+    method,inF,outF,channel,charge,wgtH,flav,runSysts,debug=args
     method=method if method.find('::')<0 else method.split('::')[1]
     print 'Running ',method,' on ',inF
     print 'Output file',outF
     print 'Selection ch=',channel,' charge=',charge,' flavSplit=',flav,' systs=',runSysts
     if wgtH : print 'Weight histogram is available'
+    if debug : print 'Verbose mode'
 
     try:
-        getattr(ROOT,method)(str(inF),str(outF),channel,charge,flav,wgtH,runSysts)
+        getattr(ROOT,method)(str(inF),str(outF),channel,charge,flav,wgtH,runSysts,debug)
     except :
         print 50*'<'
         print "  Problem  (%s) with %s continuing without"%(sys.exc_info()[1],inF)
@@ -45,7 +46,8 @@ def main():
     parser.add_option(      '--charge',      dest='charge',      help='charge  [%default]',                                     default=0,          type=int)
     parser.add_option(      '--tag',         dest='tag',         help='normalize from this tag  [%default]',                    default=None,       type='string')
     parser.add_option('-q', '--queue',       dest='queue',       help='submit to this queue  [%default]',                       default='local',    type='string')
-    parser.add_option('-n', '--njobs',       dest='njobs',       help='# jobs to run in parallel  [%default]',                                default=0,    type='int')
+    parser.add_option('-n', '--njobs',       dest='njobs',       help='# jobs to run in parallel  [%default]',                  default=0,          type='int')
+    parser.add_option('-v', '--verbose',     dest='debug',       help='pint debug messages [%default]',                         default=False,       action='store_true')
     (opt, args) = parser.parse_args()
 
     #compile macro
@@ -78,12 +80,12 @@ def main():
         inF=opt.input
         if '/store/' in inF and not 'root:' in inF : inF='root://eoscms//eos/cms'+opt.input        
         outF=opt.output
-        wgt=None
+        wgtH=None
         if opt.tag :
             if opt.tag in genWgts:
                 wgtH=genWgts[opt.tag]
-        print inF,outF,opt.channel,opt.charge,wgtH,opt.flav,opt.runSysts
-        task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,wgtH,opt.flav,opt.runSysts) )
+        print inF,outF,opt.channel,opt.charge,wgtH,opt.flav,opt.runSysts,opt.debug
+        task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,wgtH,opt.flav,opt.runSysts,opt.debug) )
     else:
 
         inputTags=getEOSlslist(directory=opt.input,prepend='')
@@ -100,7 +102,7 @@ def main():
                         processThisTag=True
                 if not processThisTag : continue
 
-            wgtH=genWgts[tag] if opt.queue=='local' else tag
+            wgtH=genWgts[opt.tag] if opt.queue=='local' else tag
             input_list=getEOSlslist(directory='%s/%s' % (opt.input,tag) )
             for ifile in xrange(0,len(input_list)):
                 inF=input_list[ifile]
@@ -110,7 +112,7 @@ def main():
                 #    for flav in [0,1,4,5]:
                 #        task_list.append( (method,inF,outF,opt.channel,opt.charge,wgtH,flav,opt.runSysts) )
                 #else:
-                task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,wgtH,0,opt.runSysts) )
+                task_list.append( (opt.method,inF,outF,opt.channel,opt.charge,wgtH,0,opt.runSysts,opt.debug) )
 
     #run the analysis jobs
     if opt.queue=='local':
@@ -124,7 +126,7 @@ def main():
     else:
         print 'launching %d tasks to submit to the %s queue'%(len(task_list),opt.queue)
         cmsswBase=os.environ['CMSSW_BASE']
-        for method,inF,outF,channel,charge,tag,flav,runSysts in task_list:
+        for method,inF,outF,channel,charge,tag,flav,runSysts,opt.debug in task_list:
             localRun='python %s/src/TopLJets2015/TopAnalysis/scripts/runLocalAnalysis.py -i %s -o %s --charge %d --ch %d --tag %s --flav %d --method %s' % (cmsswBase,inF,outF,charge,channel,tag,flav,method)
             if runSysts : localRun += ' --runSysts'            
             cmd='bsub -q %s %s/src/TopLJets2015/TopAnalysis/scripts/wrapLocalAnalysisRun.sh \"%s\"' % (opt.queue,cmsswBase,localRun)

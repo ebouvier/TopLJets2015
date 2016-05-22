@@ -32,7 +32,8 @@ void RunTopWidth(TString filename,
 		 Int_t chargeSelection, 
 		 FlavourSplitting flavourSplitting,
 		 TH1F *normH, 
-		 Bool_t runSysts)
+		 Bool_t runSysts,
+                 Bool_t debug=false)
 {
 
   bool isTTbar( filename.Contains("_TTJets") );
@@ -58,6 +59,7 @@ void RunTopWidth(TString filename,
   Int_t nentries(t->GetEntriesFast());
   t->GetEntry(0);
   bool requireEtriggerOnly(false);
+  twev.isData = ev.isData;
   if(ev.isData && filename.Contains("SingleElectron")) requireEtriggerOnly=true;
 
   cout << "...producing " << outname << " from " << nentries << " events" << endl;
@@ -203,6 +205,8 @@ void RunTopWidth(TString filename,
       //check if triggers have fired
       bool hasMuTrigger((ev.muTrigger & 0x3)!=0);
       bool hasEleTrigger((ev.elTrigger & 0x1)!=0);
+      twev.muTrigger = ev.muTrigger;
+      twev.elTrigger = ev.elTrigger;
 
       //decide the channel
       TString chTag("");
@@ -283,6 +287,7 @@ void RunTopWidth(TString filename,
 
 	  //b-tag
 	  float csv = ev.j_csv[k];	  
+          twev.j_csv[k]=ev.j_csv[k];
 	  bool isBTagged(csv>0.800);
 	  if(!ev.isData)
 	    {
@@ -364,9 +369,11 @@ void RunTopWidth(TString filename,
 	  float norm( normH ? normH->GetBinContent(1) : 1.0);
 	  wgt=lepTriggerSF*lepSelSF*puWeight*norm;
 	  if(ev.ttbar_nw>0) wgt*=ev.ttbar_w[0];
+          wgt=1.0;
 	}
       
       //nominal selection control histograms
+      twev.nvtx = ev.nvtx;
       allPlots["nvtx_"+chTag]->Fill(ev.nvtx,wgt);
       allPlots["njets_"+chTag]->Fill(otherjets.size(),wgt);
 
@@ -381,6 +388,9 @@ void RunTopWidth(TString filename,
 	  twev.l_phi[il]=leptons[il].Phi();
 	  twev.l_m[il]=leptons[il].M();
 	  twev.l_id[il]=ev.l_id[ selLeptons[il] ];
+	  twev.l_pid[il]=ev.l_pid[ selLeptons[il] ];
+	  twev.l_charge[il]=ev.l_charge[ selLeptons[il] ];
+	  twev.l_relIso[il]=ev.l_relIso[ selLeptons[il] ];
 	  for(Int_t ig=0; ig<ev.ng; ig++)
 	    {
 	      if(abs(ev.g_id[ig])!=ev.l_id[ selLeptons[il] ]) continue;
@@ -405,8 +415,8 @@ void RunTopWidth(TString filename,
 	  twev.j_eta[ij]=bJets[ij].Eta();
 	  twev.j_phi[ij]=bJets[ij].Phi();
 	  twev.j_m[ij]=bJets[ij].M();
-	  twev.gj_flav[ij]=genBJetsFlav[ij];
-	  twev.gj_hadflav[ij]=genBJetsHadFlav[ij];
+	  twev.j_flav[ij]=genBJetsFlav[ij];
+	  twev.j_hadflav[ij]=genBJetsHadFlav[ij];
 	  twev.gj_pt[ij]=genBJets[ij].Pt();
 	  twev.gj_eta[ij]=genBJets[ij].Eta();
 	  twev.gj_phi[ij]=genBJets[ij].Phi();
@@ -426,8 +436,8 @@ void RunTopWidth(TString filename,
 	  twev.j_eta[ij+2]=otherjets[ij].Eta();
 	  twev.j_phi[ij+2]=otherjets[ij].Phi();
 	  twev.j_m[ij+2]=otherjets[ij].M();
-	  twev.gj_flav[ij+2]=genOtherjetsFlav[ij];
-	  twev.gj_hadflav[ij+2]=genOtherjetsHadFlav[ij];
+	  twev.j_flav[ij+2]=genOtherjetsFlav[ij];
+	  twev.j_hadflav[ij+2]=genOtherjetsHadFlav[ij];
 	  twev.gj_pt[ij+2]=genOtherjets[ij].Pt();
 	  twev.gj_eta[ij+2]=genOtherjets[ij].Eta();
 	  twev.gj_phi[ij+2]=genOtherjets[ij].Phi();
@@ -442,8 +452,11 @@ void RunTopWidth(TString filename,
       twev.nw=1;
       twev.weight[0]=wgt;
       twev.nt=0;
-      twev.met_pt=ev.met_pt[0];
-      twev.met_phi=ev.met_phi[0];
+      for(int i = 0; i < 10; i++) {
+        twev.met_pt[i]=ev.met_pt[i];
+        twev.met_phi[i]=ev.met_phi[i];
+      }
+
       if(ev.ngtop>0)
 	{
 	  for(int i=0; i<ev.ngtop; i++)
@@ -458,6 +471,19 @@ void RunTopWidth(TString filename,
 	      if(twev.nt>4) break;
 	    }
 	}
+      for(int i = 0; i < ev.npf; i++) {
+        twev.npf = ev.npf;
+        twev.pf_j[i] = ev.pf_j[i];
+        twev.pf_id[i] = ev.pf_id[i];
+        twev.pf_pt[i] = ev.pf_pt[i];
+        twev.pf_eta[i] = ev.pf_eta[i];
+        twev.pf_phi[i] = ev.pf_phi[i];
+        twev.ngpf = ev.ngpf;
+        twev.gpf_id[i] = ev.gpf_id[i];
+        twev.gpf_pt[i] = ev.gpf_pt[i];
+        twev.gpf_eta[i] = ev.gpf_eta[i];
+        twev.gpf_phi[i] = ev.gpf_phi[i];
+      }
       outT->Fill();
     }
   
@@ -467,6 +493,7 @@ void RunTopWidth(TString filename,
   //save histos to file  
   fOut->cd();
   outT->Write();
+  puTrue->Write();
   for (auto& it : allPlots)  { 
     it.second->SetDirectory(fOut); it.second->Write(); 
   }
@@ -483,6 +510,7 @@ void createTopWidthEventTree(TTree *t,TopWidthEvent_t &twev)
 {
   //event category
   t->Branch("cat", &twev.cat,"cat/I");
+  t->Branch("isData", &twev.isData,"isData/I");
 
   //event weights
   t->Branch("nw",  &twev.nw, "nw/I");
@@ -499,6 +527,9 @@ void createTopWidthEventTree(TTree *t,TopWidthEvent_t &twev)
   t->Branch("l_phi", twev.l_phi , "l_phi[nl]/F");
   t->Branch("l_m",   twev.l_m ,   "l_m[nl]/F");
   t->Branch("l_id",   twev.l_id ,   "l_id[nl]/I");
+  t->Branch("l_pid",   twev.l_pid ,   "l_pid[nl]/I");
+  t->Branch("l_charge",   twev.l_charge ,   "l_charge[nl]/I");
+  t->Branch("l_relIso",   twev.l_relIso ,   "l_relIso[nl]/I");
   t->Branch("gl_pt",  twev.gl_pt ,  "gl_pt[nl]/F");
   t->Branch("gl_eta", twev.gl_eta , "gl_eta[nl]/F");
   t->Branch("gl_phi", twev.gl_phi , "gl_phi[nl]/F");
@@ -517,6 +548,9 @@ void createTopWidthEventTree(TTree *t,TopWidthEvent_t &twev)
   t->Branch("gj_m",   twev.gj_m ,   "gj_m[nj]/F");
   t->Branch("gj_flav",  twev.gj_flav ,  "gj_flav[nj]/I");
   t->Branch("gj_hadflav",  twev.gj_hadflav ,  "gj_hadflav[nj]/I");
+  t->Branch("j_csv",   twev.j_csv ,   "j_csv[nj]/F");
+  t->Branch("j_hadflav",  twev.j_hadflav ,  "j_hadflav[nj]/I");
+  t->Branch("j_flav",  twev.j_flav ,  "j_flav[nj]/I");
 
   //mc truth
   t->Branch("nt",  &twev.nt, "nt/I");
@@ -525,15 +559,36 @@ void createTopWidthEventTree(TTree *t,TopWidthEvent_t &twev)
   t->Branch("t_phi", twev.t_phi , "t_phi[nt]/F");
   t->Branch("t_m",   twev.t_m ,   "t_m[nt]/F");
   t->Branch("t_id",  twev.t_id ,  "t_id[nt]/I");
+
+  //pf
+  t->Branch("npf",        &twev.npf,         "npf/I");
+  t->Branch("pf_j",        twev.pf_j,        "pf_j[npf]/I");
+  t->Branch("pf_id",       twev.pf_id,       "pf_id[npf]/I");  
+  t->Branch("pf_pt",       twev.pf_pt,       "pf_pt[npf]/F");
+  t->Branch("pf_eta",      twev.pf_eta,      "pf_eta[npf]/F");
+  t->Branch("pf_phi",      twev.pf_phi,      "pf_phi[npf]/F");
+  t->Branch("ngpf",        &twev.ngpf,         "ngpf/I");
+  t->Branch("gpf_id",       twev.gpf_id,       "gpf_id[npf]/I");  
+  t->Branch("gpf_pt",       twev.gpf_pt,       "gpf_pt[npf]/F");
+  t->Branch("gpf_eta",      twev.gpf_eta,      "gpf_eta[npf]/F");
+  t->Branch("gpf_phi",      twev.gpf_phi,      "gpf_phi[npf]/F");
+
+  //reco level event
+  t->Branch("nvtx",      &twev.nvtx,      "nvtx/I");
+  t->Branch("muTrigger",        &twev.muTrigger,        "muTrigger/I");
+  t->Branch("elTrigger",        &twev.elTrigger,        "elTrigger/I");
 }
 
 //
 void resetTopWidthEvent(TopWidthEvent_t &twev)
 {
+  twev.isData=false;
   twev.cat=0;   twev.nw=0;   twev.nl=0;   twev.nj=0;   twev.nt=0;
-  twev.met_pt=0; twev.met_phi=0;
-  for(int i=0; i<10; i++) twev.weight[i]=0;
-  for(int i=0; i<2; i++) { twev.l_pt[i]=0;   twev.l_eta[i]=0;   twev.l_phi[i]=0;   twev.l_m[i]=0; twev.l_id[i]=0; twev.gl_pt[i]=0;   twev.gl_eta[i]=0;   twev.gl_phi[i]=0;   twev.gl_m[i]=0; twev.gl_id[i]=0; }
-  for(int i=0; i<50; i++) { twev.j_pt[i]=0;   twev.j_eta[i]=0;   twev.j_phi[i]=0;   twev.j_m[i]=0; twev.gj_pt[i]=0;   twev.gj_eta[i]=0;   twev.gj_phi[i]=0;   twev.gj_m[i]=0; twev.gj_flav[i]=0; twev.gj_hadflav[i]=0; } 
+
+  for(int i=0; i<10; i++) { twev.weight[i]=0; twev.met_pt[i]=0; twev.met_phi[i]=0; }
+  for(int i=0; i<2; i++) { twev.l_pt[i]=0;   twev.l_eta[i]=0;   twev.l_phi[i]=0;   twev.l_m[i]=0; twev.l_id[i]=0; twev.l_pid[i]=0; twev.l_relIso[i]=0; twev.gl_pt[i]=0;   twev.gl_eta[i]=0;   twev.gl_phi[i]=0;   twev.gl_m[i]=0; twev.gl_id[i]=0; twev.l_charge[i]=0; }
+  for(int i=0; i<50; i++) { twev.j_pt[i]=0;   twev.j_eta[i]=0;   twev.j_phi[i]=0;   twev.j_m[i]=0; twev.j_hadflav[i]=0; twev.j_flav[i]=0; twev.j_csv[i]=0; }
+  for(int i=0; i<50; i++) { twev.gj_pt[i]=0;   twev.gj_eta[i]=0;   twev.gj_phi[i]=0;   twev.gj_m[i]=0 ; twev.gj_flav[i]=0; }
   for(int i=0; i<4; i++) { twev.t_pt[i]=0;   twev.t_eta[i]=0;   twev.t_phi[i]=0;   twev.t_m[i]=0; twev.t_id[i]=0; }
+  for(int i =0; i<5000; i++) { twev.npf=0; twev.pf_j[i]=0; twev.pf_id[i]=0; twev.pf_pt[i]=0; twev.pf_eta[i]=0; twev.pf_phi[i]=0; twev.ngpf=0; twev.gpf_pt[i]=0; twev.gpf_eta[i]=0; twev.gpf_phi[i]=0; twev.gpf_id[i]=0; }
 }
