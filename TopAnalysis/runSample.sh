@@ -1,1 +1,0 @@
-python scripts/runLocalAnalysis.py -i /store/user/byates/402de72/TT_TuneCUETP8M1_13TeV-powheg-pythia8/crab_MC13TeV_TTJets/160427_103515/0000/histo_249.root -o analysis_top.root --ch 13 --charge 1 > log 2> log_err &
