@@ -17,8 +17,10 @@ fi
 
 queue=8nh
 eosdir=/store/cmst3/user/psilva/LJets2015/8c1e7c9
-outdir=~/work/TopWidth
-wwwdir=~/www/TopWidth
+#outdir=~/work/TopWidth
+outdir=/afs/cern.ch/user/b/byates/TopAnalysis/LJets2015/analysis
+wwwdir=~/www/Top2016
+method=TOP::RunTop
 lumi=2267.84
 
 RED='\e[31m'
@@ -26,13 +28,14 @@ NC='\e[0m'
 
 case $WHAT in
     SEL )
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} -o ${outdir} -m TOPWidth::RunTopWidth --ch 0;
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} -o ${outdir} -m ${method} --ch 0;
 	;;
     MERGESEL )
 	./scripts/mergeOutputs.py ${outdir};	
 	;;
     PLOTSEL )
-	python scripts/plotter.py -i ${outdir} --puNormSF puwgtctr  -j data/samples_Run2015.json -l ${lumi};	
+	#python scripts/plotter.py -i ${outdir} --puNormSF puwgtctr  -j data/samples_Run2015.json -l ${lumi};	
+	python scripts/plotter.py -i ${outdir} -j data/samples_Run2015.json -l ${lumi};	
 	;;
     WWWSEL )
 	mkdir -p ${wwwdir}/sel

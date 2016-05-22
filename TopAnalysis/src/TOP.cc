@@ -181,6 +181,7 @@ void RunTop(TString filename,
     allPlots["massDsmD0"+tag]     = new TH1F("massDsmD0"+tag,";M_{K#pi};Events" ,50,0.,60.);
     allPlots["massDs"+tag]     = new TH1F("massDs"+tag,";M_{D^{*}};Events" ,50,0.,60.);
     allPlots["pi_pt"+tag] = new TH1F("pi_pt"+tag,";#pi^{#pm} P_{T} [GeV];Events", 20, 0,300);
+    allPlots["MET"+tag] = new TH1F("MET"+tag,";MET [GeV];Events", 50,0,200);
   }
 
 
@@ -283,8 +284,8 @@ void RunTop(TString filename,
 	  dilp4=l1p4+l2p4;
 	  if(ev.l_id[tightLeptonsIso[0]]==ev.l_id[tightLeptonsIso[1]]          && 
 	     ev.l_charge[tightLeptonsIso[0]]*ev.l_charge[tightLeptonsIso[1]]<0 && 
-	     fabs(dilp4.M()-91)<10 && 
-	     dilp4.Pt()>30)
+	     fabs(dilp4.M()-91)<10) //&& 
+	     //dilp4.Pt()>30)
 	    { 
 	      isZ=true; 
 	      //isZPassingSIP3d=(ev.l_ip3dsig[0]<4 && ev.l_ip3dsig[1]<4);
@@ -449,6 +450,7 @@ void RunTop(TString filename,
           allPlots["j_pt"+chTag]->Fill(it.Pt(),wgt);
         for (auto it : bJets)
           allPlots["bj_pt"+chTag]->Fill(it.Pt(),wgt);
+        allPlots["MET"+chTag]->Fill(ev.met_pt[0],wgt);
       }
       else if(selLeptons.size() == 2) {// && bJets.size() > 0 && lightJets.size() >= 2) {
         if(isZ) continue;
@@ -463,6 +465,12 @@ void RunTop(TString filename,
           allPlots["j_pt"+chTag]->Fill(it.Pt(),wgt);
         for (auto it : bJets)
           allPlots["bj_pt"+chTag]->Fill(it.Pt(),wgt);
+        TLorentzVector leadlp41,leadlp42;
+        leadlp41.SetPtEtaPhiM(ev.l_pt[selLeptons[0]],ev.l_eta[selLeptons[0]],ev.l_phi[selLeptons[0]],ev.l_mass[selLeptons[0]]);
+        leadlp42.SetPtEtaPhiM(ev.l_pt[selLeptons[1]],ev.l_eta[selLeptons[1]],ev.l_phi[selLeptons[1]],ev.l_mass[selLeptons[1]]);
+        allPlots["leadL_pt"+chTag]->Fill(ev.l_pt[selLeptons[0]],wgt);
+        allPlots["leadL_pt"+chTag]->Fill(ev.l_pt[selLeptons[1]],wgt);
+        allPlots["MET"+chTag]->Fill(ev.met_pt[0],wgt);
       }
       if(debug) cout << "simple plots DONE" << endl;
 
