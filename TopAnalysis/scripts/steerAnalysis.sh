@@ -28,10 +28,16 @@ mass=${4}
 if [[ "${mass}" == "" ]]; then mass=0; fi
 
 queue=8nh
-eosdir=/store/cmst3/user/psilva/LJets2015/076fb7a
+#eosdir=/store/cmst3/user/psilva/LJets2015/076fb7a
+eosdir=/store/cmst3/user/psilva/LJets2015/8c1e7c9
+#eosdir=/store/user/byates/LJets2015/skim
 outdir=/afs/cern.ch/work/b/byates/LJets2015
-wwwdir=~/www/LJets2015-arcrev
+#outdir=/afs/cern.ch/user/b/byates/TopAnalysis/eos/cms/store/user/byates/LJets2015/skim
+wwwdir=/afs/cern.ch/user/b/byates/www/Top2016
 lumi=2267.84
+method=TOP::RunTop
+#method=TOP-16-006::RunTop16006
+#method=TOP::RunTop
 
 RED='\e[31m'
 NC='\e[0m'
@@ -39,20 +45,20 @@ NC='\e[0m'
 case $WHAT in
     SELTEST)
 	echo -e "[ ${RED} Submitting inclusive selection for the signal regions ${NC} without syst ]"
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} -o ${outdir}/analysis_mu  --ch 13
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} -o ${outdir}/analysis_mu  --ch 13 --method ${method}
 	#python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} -o ${outdir}/analysis_e   --ch 11 
 	;;
     SEL )
 	echo -e "[ ${RED} Submitting the selection for the signal regions ${NC} ]"
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_muplus   --ch 13   --charge 1
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_muminus  --ch 13   --charge -1
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_eplus   --ch 11   --charge 1
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_eminus  --ch 11   --charge -1
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_muplus   --ch 13   --charge 1 -m ${method}
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_muminus  --ch 13   --charge -1 -m ${method}
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_eplus   --ch 11   --charge 1 -m ${method}
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_eminus  --ch 11   --charge -1 -m ${method}
 	
 	echo -e "[ ${RED} Submitting the selection for the control regions ${NC} ]"
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue}            -o ${outdir}/analysis_munoniso --ch 1300
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue}            -o ${outdir}/analysis_enoniso --ch 1100
-	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_z --ch 21
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue}            -o ${outdir}/analysis_munoniso --ch 1300 -m ${method}
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue}            -o ${outdir}/analysis_enoniso --ch 1100 -m ${method}
+	python scripts/runLocalAnalysis.py -i ${eosdir} -q ${queue} --runSysts -o ${outdir}/analysis_z --ch 21 -m ${method}
 	;;
     MERGE )
 	a=(muplus muminus eplus eminus munoniso enoniso z)

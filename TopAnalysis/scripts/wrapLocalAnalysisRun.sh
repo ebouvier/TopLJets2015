@@ -13,3 +13,5 @@ eval `scram r -sh`
 
 #run with the arguments passed
 $*
+#xrdcp MC13TeV_*.root root://eoscms//eos/cms/store/user/byates/LJets2015/skim/
+#xrdcp Data13TeV_*.root root://eoscms//eos/cms/store/user/byates/LJets2015/skim/
