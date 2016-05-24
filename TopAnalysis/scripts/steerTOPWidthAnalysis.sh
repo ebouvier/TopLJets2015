@@ -36,17 +36,18 @@ case $WHAT in
     PLOTSEL )
 	#python scripts/plotter.py -i ${outdir} --puNormSF puwgtctr  -j data/samples_Run2015.json -l ${lumi};	
 	python scripts/plotter.py -i ${outdir} -j data/samples_Run2015.json -l ${lumi};	
+	python scripts/plotter.py -i ${outdir} -j data/samples_Run2015.json -l ${lumi} --saveLog;	
 	;;
     WWWSEL )
-	mkdir -p ${wwwdir}/sel
-	cp ${outdir}/plots/*.{png,pdf} ${wwwdir}/sel
-	cp test/index.php ${wwwdir}/sel
+	#mkdir -p ${wwwdir}
+	cp ${outdir}/plots/*.{png,pdf} ${wwwdir}
+	cp test/index.php ${wwwdir}
 	;;
     ANA )
 	python scripts/runTopWidthAnalysis.py -i ${outdir}/Chunks -o ${outdir}/analysis -q 8nh;
 	;;
     MERGE )
-	./scripts/mergeOutputs.py ${outdir}/analysis;
+	./scripts/mergeOutputs.py ${outdir};
 	;;
     PLOT )
         python scripts/plotter.py -i ${outdir}/analysis  -j data/samples_Run2015.json -l ${lumi};        

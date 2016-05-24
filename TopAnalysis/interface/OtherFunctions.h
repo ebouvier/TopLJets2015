@@ -17,4 +17,6 @@ int firstTrackIndex(int jetindex) {
     return result;
 }
 
+bool VecSort(TLorentzVector j1, TLorentzVector j2) { return j1.Pt() > j2.Pt(); }
+
 #endif

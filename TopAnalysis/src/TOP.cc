@@ -47,12 +47,13 @@ void RunTop(TString filename,
 		 Bool_t runSysts,
                  Bool_t debug=false)
 {
+  if(debug) cout << "in RunTop" << endl;
 
   bool isTTbar( filename.Contains("_TTJets") );
   //bool debug(false);
   //bool isData( filename.Contains("Data") ? true : false);
-  //bool singleLep(false);
-  //bool doubleLep(false);
+  bool singleLep(false);
+  bool doubleLep(false);
   
   //READ TREE FROM FILE
   MiniEvent_t ev;
@@ -152,6 +153,7 @@ void RunTop(TString filename,
   for(int i = 0; i < (int)lfsVec.size(); i++) {
     TString tag(lfsVec[i]);
     allPlots["lp_pt"+tag] = new TH1F("lp_pt"+tag,";Lepton P_{T} [GeV];Events", 20, 0,300);
+    allPlots["l2p_pt"+tag] = new TH1F("l2p_pt"+tag,";Sub-leading Lepton P_{T} [GeV];Events", 20, 0,300);
     allPlots["dilp_pt"+tag] = new TH1F("dilp_pt"+tag,";Lepton P_{T} [GeV];Events", 20, 0,300);
     allPlots["dilp_m"+tag] = new TH1F("dilp_m"+tag,";M_{ll} [GeV];Events", 20, 0,300);
     allPlots["j_pt"+tag] = new TH1F("j_pt"+tag,";Jet P_{T} [GeV];Events", 20, 0,300);
@@ -182,6 +184,7 @@ void RunTop(TString filename,
     allPlots["massDs"+tag]     = new TH1F("massDs"+tag,";M_{D^{*}};Events" ,50,0.,60.);
     allPlots["pi_pt"+tag] = new TH1F("pi_pt"+tag,";#pi^{#pm} P_{T} [GeV];Events", 20, 0,300);
     allPlots["MET"+tag] = new TH1F("MET"+tag,";MET [GeV];Events", 50,0,200);
+    allPlots["charge"+tag] = new TH1F("charge"+tag,";Charge;Events", 3,-2,2);
   }
 
 
@@ -440,42 +443,61 @@ void RunTop(TString filename,
 
       //simple fill
       if(debug) cout << "starting simple plots" << endl;
-      if(selLeptons.size() == 1) {// && bJets.size() > 0 && lightJets.size() >= 4) {
-        //singleLep = true;
+      if(selLeptons.size() == 1 && bJets.size() > 1 && lightJets.size() >= 4) {
+        singleLep = true;
         allPlots["nj"+chTag]->Fill(lightJets.size(),wgt);
         allPlots["nbj"+chTag]->Fill(bJets.size(),wgt);
         allPlots["nlp"+chTag]->Fill(selLeptons.size(),wgt);
         allPlots["lp_pt"+chTag]->Fill(lp4.Pt(),wgt);
+        if(debug) cout << "sorting jets" << endl;
+	std::sort(lightJets.begin(), lightJets.end(), VecSort);
+        std::sort(bJets.begin(), bJets.end(), VecSort);
+        /*
         for (auto it : lightJets)
           allPlots["j_pt"+chTag]->Fill(it.Pt(),wgt);
         for (auto it : bJets)
           allPlots["bj_pt"+chTag]->Fill(it.Pt(),wgt);
+        */
+        allPlots["j_pt"+chTag]->Fill(lightJets[0].Pt(),wgt);
+        allPlots["bj_pt"+chTag]->Fill(bJets[0].Pt(),wgt);
         allPlots["MET"+chTag]->Fill(ev.met_pt[0],wgt);
       }
-      else if(selLeptons.size() == 2) {// && bJets.size() > 0 && lightJets.size() >= 2) {
+      else if(selLeptons.size() == 2 && bJets.size() > 1 && lightJets.size() > 1) {
         if(isZ) continue;
-        if(ev.l_id[selLeptons[0]]==ev.l_id[selLeptons[1]] || met.Pt() < 40) continue;
-        //doubleLep = true;
+        if(ev.l_id[selLeptons[0]]==ev.l_id[selLeptons[1]] && met.Pt() < 40) continue;
+        doubleLep = true;
         allPlots["nj"+chTag]->Fill(lightJets.size(),wgt);
         allPlots["nbj"+chTag]->Fill(bJets.size(),wgt);
         allPlots["ndilp"+chTag]->Fill(selLeptons.size(),wgt);
         allPlots["dilp_pt"+chTag]->Fill(dilp4.Pt(),wgt);
         allPlots["dilp_m"+chTag]->Fill(dilp4.M(),wgt);
+        allPlots["lp_pt"+chTag]->Fill(lp4.Pt(),wgt);
+        allPlots["l2p_pt"+chTag]->Fill(l2p4.Pt(),wgt);
+        if(debug) cout << "sorting jets" << endl;
+	std::sort(lightJets.begin(), lightJets.end(), VecSort);
+        std::sort(bJets.begin(), bJets.end(), VecSort);
+        /*
         for (auto it : lightJets)
           allPlots["j_pt"+chTag]->Fill(it.Pt(),wgt);
         for (auto it : bJets)
           allPlots["bj_pt"+chTag]->Fill(it.Pt(),wgt);
+        */
+        allPlots["j_pt"+chTag]->Fill(lightJets[0].Pt(),wgt);
+        allPlots["bj_pt"+chTag]->Fill(bJets[0].Pt(),wgt);
         TLorentzVector leadlp41,leadlp42;
+        /*
         leadlp41.SetPtEtaPhiM(ev.l_pt[selLeptons[0]],ev.l_eta[selLeptons[0]],ev.l_phi[selLeptons[0]],ev.l_mass[selLeptons[0]]);
         leadlp42.SetPtEtaPhiM(ev.l_pt[selLeptons[1]],ev.l_eta[selLeptons[1]],ev.l_phi[selLeptons[1]],ev.l_mass[selLeptons[1]]);
         allPlots["leadL_pt"+chTag]->Fill(ev.l_pt[selLeptons[0]],wgt);
         allPlots["leadL_pt"+chTag]->Fill(ev.l_pt[selLeptons[1]],wgt);
+        */
         allPlots["MET"+chTag]->Fill(ev.met_pt[0],wgt);
+        allPlots["charge"+chTag]->Fill(ev.l_charge[selLeptons[0]]*ev.l_charge[selLeptons[1]],wgt);
       }
       if(debug) cout << "simple plots DONE" << endl;
 
 
-      //if(!singleLep && !doubleLep) continue;
+      if(!singleLep && !doubleLep) continue;
       if(debug) cout << "l or ll" << endl;
       TLorentzVector p_track1, p_track2;
       const float gMassMu = 0.1057;
@@ -601,15 +623,19 @@ void RunTop(TString filename,
   TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
   fOut->cd();
   if(debug) cout << "writing histograms" << endl;
+/*
   for(auto it : lfsVec) {
     it.Remove(0,1);
     fOut->mkdir(it);
   }
+*/
   for (auto& it : allPlots)  { 
     if(debug) cout << it.second->GetName() << endl;
     if(debug) cout << it.second->GetEntries() << endl;
+/*
     TString dir = it.first;
     dir.Remove(0,dir.Last('_')+1);
+*/
     //fOut->cd( dir );
     it.second->SetDirectory(fOut); it.second->Write(); 
     fOut->cd();
