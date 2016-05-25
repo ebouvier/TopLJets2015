@@ -73,6 +73,29 @@ void RunTop(TString filename,
   cout << "...producing " << outname << " from " << nentries << " events" << (runSysts ? " syst variations will be considered" : "") << endl;
   
   //PILEUP WEIGHTING
+  std::vector<TGraph *>puWgtGr;
+  if(!ev.isData)
+    {
+      if(debug) cout << "loading pileup weight" << endl;
+      TString puWgtUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/pileupWgts.root");
+      gSystem->ExpandPathName(puWgtUrl);
+      TFile *fIn=TFile::Open(puWgtUrl);
+      TGraph *puData=(TGraph *)fIn->Get("pu_nom");
+      Float_t totalData=puData->Integral();
+      TH1 *tmp=(TH1 *)puTrue->Clone("tmp");
+      for(Int_t xbin=1; xbin<=tmp->GetXaxis()->GetNbins(); xbin++)
+	{
+	  Float_t yexp=puTrue->GetBinContent(xbin);
+	  Double_t xobs,yobs;
+	  puData->GetPoint(xbin-1,xobs,yobs);
+	  tmp->SetBinContent(xbin, yexp>0 ? yobs/(totalData*yexp) : 0. );
+	}
+      TGraph *gr=new TGraph(tmp);
+      gr->SetName("puwgts_nom");
+      puWgtGr.push_back( gr );
+      tmp->Delete();
+    }
+    if(debug) cout << "loading pileup weight DONE" << endl;
 
   //LEPTON EFFICIENCIES
   TString lepEffUrl("${CMSSW_BASE}/src/TopLJets2015/TopAnalysis/data/leptonEfficiencies.root");
@@ -137,8 +160,9 @@ void RunTop(TString filename,
       expBtagEff["udsg"]=(TGraphAsymmErrors *)beffIn->Get("udsg");
       beffIn->Close();
 
-      float norm( normH ? normH->GetBinContent(1) : 1.0);
-      wgt=norm;//lepTriggerSF[0]*lepSelSF[0]*puWeight[0]*norm;
+      //wgt=1.0;
+      //float norm( normH ? normH->GetBinContent(1) : 1.0);
+      //wgt=norm;//lepTriggerSF[0]*lepSelSF[0]*puWeight[0]*norm;
     }
 
   //JET ENERGY SCALE: https://twiki.cern.ch/twiki/bin/view/CMS/JECUncertaintySources#Summer15_uncertainties
@@ -195,6 +219,17 @@ void RunTop(TString filename,
     {
       t->GetEntry(iev);
       if(iev%5000==0) printf ("\r [%3.0f/100] done",100.*(float)(iev)/(float)(nentries));
+
+      //account for pu weights and effect on normalization
+      float puWeight(1.0);
+      if(!ev.isData) 
+	{
+	  puWeight=puWgtGr[0]->Eval(ev.putrue);  
+          /*
+	  allPlots["puwgtctr"]->Fill(0.,1.0);
+	  allPlots["puwgtctr"]->Fill(1.,puWeight);
+          */
+	}
 
       //select 1 good lepton
       //cout << "entering lepton selection" << endl;
@@ -342,12 +377,22 @@ void RunTop(TString filename,
       */
       if(debug) cout << "checking lepton kinematics DONE" << endl;
 
+      //save lepton kinematics
+      std::vector<TLorentzVector> leptons;
+      for(size_t il=0; il<selLeptons.size(); il++)
+	{
+	  int lepIdx=selLeptons[il];
+	  TLorentzVector lp4;
+	  lp4.SetPtEtaPhiM(ev.l_pt[lepIdx],ev.l_eta[lepIdx],ev.l_phi[lepIdx],ev.l_mass[lepIdx]);
+	  leptons.push_back(lp4);
+	}
+
       //select jets
       Float_t htsum(0);
       TLorentzVector jetDiff(0,0,0,0);
       std::vector<TLorentzVector> bJets,lightJets;
       TLorentzVector visSystem(isZ ? dilp4 : lp4);
-      int nbjets(0),ncjets(0),nljets(0),leadingJetIdx(-wgt);
+      int nbjets(0),ncjets(0),nljets(0);//,leadingJetIdx(-wgt);
       std::vector<int> resolvedJetIdx;
       std::vector<TLorentzVector> resolvedJetP4;
       for (int k=0; k<ev.nj;k++)
@@ -385,7 +430,7 @@ void RunTop(TString filename,
 	  if(jp4.Pt()<30) continue;
 	  if(fabs(jp4.Eta()) > 2.4) continue;
 	  
-	  if(leadingJetIdx<0) leadingJetIdx=k;
+	  //if(leadingJetIdx<0) leadingJetIdx=k;
 	  htsum += jp4.Pt();
 	  if(bJets.size()+lightJets.size()<4) visSystem += jp4;
 
@@ -423,6 +468,42 @@ void RunTop(TString filename,
 	  if(isBTagged) bJets.push_back(jp4);
 	  else          lightJets.push_back(jp4);
 	}
+
+      
+      //event weight
+      //float wgt(1.0);
+      if(!ev.isData)
+	{
+	  //update lepton selection scale factors, if found
+	  float lepTriggerSF(1.0),lepSelSF(1.0);
+	  for(UInt_t il=0; il<leptons.size(); il++)
+	    {
+	      TString prefix(abs(ev.l_id[il])==11 ? "e" : "m");
+	      float minEtaForEff( lepEffH[prefix+"_sel"]->GetXaxis()->GetXmin() ), maxEtaForEff( lepEffH[prefix+"_sel"]->GetXaxis()->GetXmax()-0.01 );
+	      float etaForEff=TMath::Max(TMath::Min(float(fabs(leptons[il].Eta())),maxEtaForEff),minEtaForEff);
+	      Int_t etaBinForEff=lepEffH[prefix+"_sel"]->GetXaxis()->FindBin(etaForEff);
+	      
+	      float minPtForEff( lepEffH[prefix+"_sel"]->GetYaxis()->GetXmin() ), maxPtForEff( lepEffH[prefix+"_sel"]->GetYaxis()->GetXmax()-0.01 );
+	      float ptForEff=TMath::Max(TMath::Min(float(leptons[il].Pt()),maxPtForEff),minPtForEff);
+	      Int_t ptBinForEff=lepEffH[prefix+"_sel"]->GetYaxis()->FindBin(ptForEff);
+		  		  
+	      lepSelSF=(lepEffH[prefix+"_sel"]->GetBinContent(etaBinForEff,ptBinForEff));
+	      
+	      if(il!=0) continue;
+	      if(prefix=="m")
+		{
+		  lepTriggerSF=(lepEffH[prefix+"_trig"]->GetBinContent(etaBinForEff,ptBinForEff));
+		
+		}
+	    }
+
+	  //update nominal event weight
+	  float norm( normH ? normH->GetBinContent(1) : 1.0);
+	  wgt=lepTriggerSF*lepSelSF*puWeight*norm;
+	  if(ev.ttbar_nw>0) wgt*=ev.ttbar_w[0];
+          //wgt=1.0;
+	}
+
 
       //MET and transverse mass
       TLorentzVector met(0,0,0,0);
