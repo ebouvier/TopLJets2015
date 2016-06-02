@@ -18,5 +18,6 @@ int firstTrackIndex(int jetindex) {
 }
 
 bool VecSort(TLorentzVector j1, TLorentzVector j2) { return j1.Pt() > j2.Pt(); }
+bool sortJetTuple(std::pair<int,float> i, std::pair<int,float> j) { return std::get<1>(i) > std::get<1>(j); }
 
 #endif

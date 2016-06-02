@@ -70,6 +70,7 @@ void RunTop(TString filename,
   t->GetEntry(0);
   bool requireEtriggerOnly(false);
   if(ev.isData) runSysts=false;
+  if(ev.isData && filename.Contains("SingleElectron")) requireEtriggerOnly=true;
   cout << "...producing " << outname << " from " << nentries << " events" << (runSysts ? " syst variations will be considered" : "") << endl;
   
   //PILEUP WEIGHTING
@@ -177,14 +178,14 @@ void RunTop(TString filename,
   for(int i = 0; i < (int)lfsVec.size(); i++) {
     TString tag(lfsVec[i]);
     allPlots["lp_pt"+tag] = new TH1F("lp_pt"+tag,";Lepton P_{T} [GeV];Events / 10 GeV", 20, 0,200);
-    allPlots["l2p_pt"+tag] = new TH1F("l2p_pt"+tag,";Sub-leading Lepton P_{T} [GeV];Events / 10 GeV", 5, 0,50);
+    allPlots["l2p_pt"+tag] = new TH1F("l2p_pt"+tag,";Sub-leading Lepton P_{T} [GeV];Events / 10 GeV", 20, 0,200);
     allPlots["dilp_pt"+tag] = new TH1F("dilp_pt"+tag,";Lepton P_{T} [GeV];Events / 10 GeV", 10, 0,100);
     allPlots["dilp_m"+tag] = new TH1F("dilp_m"+tag,";M_{ll} [GeV];Events / 10 GeV", 10, 0,100);
     allPlots["j_pt"+tag] = new TH1F("j_pt"+tag,";Jet P_{T} [GeV];Events / 20 GeV", 15, 0,300);
     allPlots["bj_pt"+tag] = new TH1F("bj_pt"+tag,";b Jet P_{T} [GeV];Events / 20 GeV", 15, 0,300);
     allPlots["nlp"+tag]     = new TH1F("nlp"+tag,";N_{l};Events" ,3,0.,3.);
     allPlots["ndilp"+tag]     = new TH1F("ndilp"+tag,";N_{ll};Events" ,3,0.,3.);
-    allPlots["nj"+tag]     = new TH1F("nj"+tag,";N_{jets};Events" ,6,2.,8.);
+    allPlots["nj"+tag]     = new TH1F("nj"+tag,";N_{jets};Events" ,8,2.,10.);
     allPlots["nbj"+tag]     = new TH1F("nbj"+tag,";N_{b-jets};Events" ,4,1.,5.);
     allPlots["nstart"+tag]     = new TH1F("nstart"+tag,";N_{start};Events" ,3,0.,5.);
     allPlots["pfid"+tag]     = new TH1F("pfid"+tag,";PFID;Events" ,440,-220.,220.);
@@ -198,22 +199,22 @@ void RunTop(TString filename,
     allPlots["massDsmD0"+tag]     = new TH1F("massDsmD0"+tag,";M_{K#pi};Events" ,20,1.,3.);
     allPlots["massDs"+tag]     = new TH1F("massDs"+tag,";M_{D^{*}};Events" ,20,0.,20.);
 */
-    allPlots["massJPsi"+tag]     = new TH1F("massJPsi"+tag,";M_{J/#Psi};Events / 0.1 GeV" ,9,2.5,3.4);
-    allPlots["massD0"+tag]     = new TH1F("massD0"+tag,";M_{D^0};Events / 0.05 GeV" ,6,1.7,2.0);
+    allPlots["massJPsi"+tag]     = new TH1F("massJPsi"+tag,";M_{J/#Psi};Events / 0.01 GeV" ,18,2.5,3.4);
+    allPlots["massD0"+tag]     = new TH1F("massD0"+tag,";M_{D^{0}};Events / 0.01 GeV" ,30,1.7,2.0);
     allPlots["masslep"+tag]     = new TH1F("masslep"+tag,";M_{K#pi};Events" ,20,0.,20.);
     allPlots["massmu"+tag]     = new TH1F("massmu"+tag,";M_{K#pi};Events" ,20,0.,20.);
     allPlots["masse"+tag]     = new TH1F("masse"+tag,";M_{K#pi};Events" ,20,0.,20.);
     allPlots["massDsmD0loose"+tag]     = new TH1F("massDsmD0loose"+tag,";M_{K#pi};Events / 0.05 GeV" ,6,1.7,2.);
     allPlots["massDsmD0"+tag]     = new TH1F("massDsmD0"+tag,";M_{K#pi};Events / 0.05 GeV" ,6,1.7,2.);
-    allPlots["massDs"+tag]     = new TH1F("massDs"+tag,";M_{D^{*}};Events / 0.1 GeV / 0.05" ,6,1.7,2.0);
+    allPlots["massDs"+tag]     = new TH1F("massDs"+tag,";M_{D^{*}};Events / 0.1 GeV / 0.01" ,30,1.7,2.0);
     allPlots["pi_pt"+tag] = new TH1F("pi_pt"+tag,";#pi^{#pm} P_{T} [GeV];Events / 10 GeV", 15, 0,150);
     allPlots["MET"+tag] = new TH1F("MET"+tag,";MET [GeV];Events / 20 GeV", 10,0,200);
     allPlots["charge"+tag] = new TH1F("charge"+tag,";Charge;Events", 3,-2,2);
-    allPlots["dR"+tag] = new TH1F("dR"+tag,";dR;Events / 0.1", 20,0,2);
-    allPlots["relIso_m"] = new TH1F("relIso_m",";relIso;Events / 0.05", 20,0,1.);
-    allPlots["relIso_e"] = new TH1F("relIso_e",";relIso;Events / 0.05", 20,0,1.);
+    allPlots["dR"+tag] = new TH1F("dR"+tag,";dR;Events / 0.03", 20,0.4,1.);
 
   }
+    allPlots["relIso_m"] = new TH1F("relIso_m",";relIso;Events / 0.05", 20,0,1.);
+    allPlots["relIso_e"] = new TH1F("relIso_e",";relIso;Events / 0.05", 20,0,1.);
 
 
   for (auto& it : allPlots)   { it.second->Sumw2(); it.second->SetDirectory(0); }
@@ -253,9 +254,9 @@ void RunTop(TString filename,
 	  //bool passSIP3d(ev.l_ip3dsig[il]<4);
 	  //if(channelSelection==21) passSIP3d=true;
 	  if( ev.l_id[il] == 13 )
-            allPlots["relIso_m"]->Fill(relIso);
+            allPlots["relIso_m"]->Fill(relIso,wgt);
           else if( ev.l_id[il] == 11)
-            allPlots["relIso_e"]->Fill(relIso);
+            allPlots["relIso_e"]->Fill(relIso,wgt);
 
 	  if(passTightKin && passTightId)// && passSIP3d)
 	    {
@@ -320,23 +321,23 @@ void RunTop(TString filename,
       Int_t lepIdx=-1;
       Bool_t isZ(false);//,isZPassingSIP3d(false);
       TLorentzVector l1p4,l2p4,dilp4;
-      if(tightLeptonsIso.size()==1)                                       lepIdx=tightLeptonsIso[0];
-      else if (tightLeptonsIso.size()==0 && tightLeptonsNonIso.size()==1) lepIdx=tightLeptonsNonIso[0];
-      else if(tightLeptonsIso.size()==2)
+      if(tightLeptons.size()==1)                                       lepIdx=tightLeptons[0];
+      else if (tightLeptons.size()==0 && tightLeptonsNonIso.size()==1) lepIdx=tightLeptonsNonIso[0];
+      else if(tightLeptons.size()==2)
 	{	  
           if(debug) cout << "di-lepton" << endl;
-	  l1p4.SetPtEtaPhiM(ev.l_pt[tightLeptonsIso[0]],ev.l_eta[tightLeptonsIso[0]],ev.l_phi[tightLeptonsIso[0]],ev.l_mass[tightLeptonsIso[0]]);
-	  l2p4.SetPtEtaPhiM(ev.l_pt[tightLeptonsIso[1]],ev.l_eta[tightLeptonsIso[1]],ev.l_phi[tightLeptonsIso[1]],ev.l_mass[tightLeptonsIso[1]]);
+	  l1p4.SetPtEtaPhiM(ev.l_pt[tightLeptons[0]],ev.l_eta[tightLeptons[0]],ev.l_phi[tightLeptons[0]],ev.l_mass[tightLeptons[0]]);
+	  l2p4.SetPtEtaPhiM(ev.l_pt[tightLeptons[1]],ev.l_eta[tightLeptons[1]],ev.l_phi[tightLeptons[1]],ev.l_mass[tightLeptons[1]]);
 	  dilp4=l1p4+l2p4;
-	  if(ev.l_id[tightLeptonsIso[0]]==ev.l_id[tightLeptonsIso[1]]          && 
-	     ev.l_charge[tightLeptonsIso[0]]*ev.l_charge[tightLeptonsIso[1]]<0 && 
+	  if(ev.l_id[tightLeptons[0]]==ev.l_id[tightLeptons[1]]          && 
+	     ev.l_charge[tightLeptons[0]]*ev.l_charge[tightLeptons[1]]<0 && 
 	     fabs(dilp4.M()-91)<10) //&& 
 	     //dilp4.Pt()>30)
 	    { 
 	      isZ=true; 
 	      //isZPassingSIP3d=(ev.l_ip3dsig[0]<4 && ev.l_ip3dsig[1]<4);
 	    }
-	  lepIdx=tightLeptonsIso[0];
+	  lepIdx=tightLeptons[0];
           if(debug) cout << "di-lepton DONE" << endl;
 	}
 
@@ -406,11 +407,13 @@ void RunTop(TString filename,
 	  //if(isZ && jp4.DeltaR(l2p4)<0.5)continue;
           bool overlapsWithLepton(false);
           for(size_t il=0; il<leptons.size(); il++) {
-            allPlots["dR"+chTag]->Fill(jp4.DeltaR(leptons[il]));
+            //allPlots["dR"+chTag]->Fill(jp4.DeltaR(leptons[il]),wgt);
             if(jp4.DeltaR(leptons[il])>0.4) continue;
 	    overlapsWithLepton=true;
           }
           if(overlapsWithLepton) continue;
+          for(size_t il=0; il<leptons.size(); il++)
+            allPlots["dR"+chTag]->Fill(jp4.DeltaR(leptons[il]),wgt);
 
 	  //smear jet energy resolution for MC
 	  //jetDiff -= jp4;
@@ -599,7 +602,13 @@ void RunTop(TString filename,
         if(ev.pf_j[i] != jetindex) continue;
         if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
         for(int j = 0; j < ev.npf; j++) {
+          if(ev.pf_j[j] != jetindex) continue;
+          /*
+          if(abs(ev.pf_id[i]) !== abs(ev.pf_id[i])) continue;
           if(ev.pf_id[i]*ev.pf_id[j] > 0) continue; // e^+e^- or mu^+mu^-
+          */
+          if(ev.pf_id[i] != -ev.pf_id[j]) continue; // e^+e^- or mu^+mu^-
+          if(debug) cout << ev.pf_id[i] << " " << -ev.pf_id[j] << endl;
 
           float trackmass = gMassMu;
           if(abs(ev.pf_id[j]*ev.pf_id[j]) == 121) trackmass = 0.;
@@ -615,10 +624,37 @@ void RunTop(TString filename,
 
       //D0 and D* 
       if(debug) cout << "Starting D0 and D*" << endl;
+      //vector<TLorentzVector> jets;
+      vector<pair<int,float>> jets;
+      for(int i = 0; i < ev.npf; i++) {
+        if(ev.pf_j[i] != jetindex) continue;
+        /*
+        TLorentzVector tmp_j;
+        tmp_j.SetPtEtaPhiM(ev.pf_pt[i], ev.pf_eta[i], ev.pf_phi[i], 0);
+        jets.push_back(tmp_j);
+        */
+        jets.push_back(std::make_pair(i,ev.pf_pt[i]));
+      }
+      std::sort(jets.begin(), jets.end(), sortJetTuple);
+      for(int i = 0; i < (int)jets.size(); i++)
+        if(std::get<0>(jets.at(i)) == jetindex) {
+          jetindex = i;
+          break;
+        }
+      for(int i = 0; i < (int)jets.size(); i++)
+        if(std::get<0>(jets.at(i)) == nstart) {
+          nstart = i;
+          break;
+        }
+      if(jets.size() < 3) continue;
+      if((jets.size() - nstart) < 3) continue;
       for(int i = nstart; i < nstart+3; i++)
+      //for(int i = 0; i < 3; i++)
         for(int j = i+1; j < 3; j++) {
-          int tk1 = i;
-          int tk2 = j;
+          int tk1 = get<0>(jets.at(i));
+          int tk2 = get<0>(jets.at(j));
+          if(ev.pf_j[i] != jetindex) continue;
+          if(ev.pf_j[j] != jetindex) continue;
 
           //opposite sign
           if(ev.pf_id[tk1]*ev.pf_id[tk2] != -211*211) continue;
@@ -635,7 +671,8 @@ void RunTop(TString filename,
 
           //looking for lepton
           if(debug) cout << "third lepton" << endl;
-          for(int tk3 = 0; tk3 < ev.npf; tk3++) {
+          //for(int tk3 = 0; tk3 < ev.npf; tk3++) {
+          for(int tk3 = 0; tk3 < (int)jets.size(); tk3++) {
             if(ev.pf_j[tk3] != jetindex) continue;
             if(tk3 == tk1) continue;
             if(tk3 == tk2) continue;
@@ -659,7 +696,8 @@ void RunTop(TString filename,
           }
           //looking for pion
           if(debug) cout << "D*->pi+D0" << endl;
-          for(int tk3 = 0; tk3 < ev.npf; tk3++) {
+          //for(int tk3 = 0; tk3 < ev.npf; tk3++) {
+          for(int tk3 = 0; tk3 < (int)jets.size(); tk3++) {
             if(ev.pf_j[tk3] != jetindex) continue;
             if(tk3 == tk1) continue;
             if(tk3 == tk2) continue;
