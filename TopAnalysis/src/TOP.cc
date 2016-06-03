@@ -52,8 +52,6 @@ void RunTop(TString filename,
   bool isTTbar( filename.Contains("_TTJets") );
   //bool debug(false);
   //bool isData( filename.Contains("Data") ? true : false);
-  bool singleLep(false);
-  bool doubleLep(false);
   
   //READ TREE FROM FILE
   MiniEvent_t ev;
@@ -179,14 +177,15 @@ void RunTop(TString filename,
     TString tag(lfsVec[i]);
     allPlots["lp_pt"+tag] = new TH1F("lp_pt"+tag,";Lepton P_{T} [GeV];Events / 10 GeV", 20, 0,200);
     allPlots["l2p_pt"+tag] = new TH1F("l2p_pt"+tag,";Sub-leading Lepton P_{T} [GeV];Events / 10 GeV", 20, 0,200);
-    allPlots["dilp_pt"+tag] = new TH1F("dilp_pt"+tag,";Lepton P_{T} [GeV];Events / 10 GeV", 10, 0,100);
-    allPlots["dilp_m"+tag] = new TH1F("dilp_m"+tag,";M_{ll} [GeV];Events / 10 GeV", 10, 0,100);
-    allPlots["j_pt"+tag] = new TH1F("j_pt"+tag,";Jet P_{T} [GeV];Events / 20 GeV", 15, 0,300);
-    allPlots["bj_pt"+tag] = new TH1F("bj_pt"+tag,";b Jet P_{T} [GeV];Events / 20 GeV", 15, 0,300);
+    allPlots["dilp_pt"+tag] = new TH1F("dilp_pt"+tag,";Lepton P_{T} [GeV];Events / 10 GeV", 20, 0,200);
+    allPlots["dilp_m"+tag] = new TH1F("dilp_m"+tag,";M_{ll} [GeV];Events / 10 GeV", 20, 0,200);
+    allPlots["j_pt"+tag] = new TH1F("j_pt"+tag,";Leading Jet P_{T} [GeV];Events / 20 GeV", 15, 0,300);
+    allPlots["bj_pt"+tag] = new TH1F("bj_pt"+tag,";Leading b Jet P_{T} [GeV];Events / 20 GeV", 15, 0,300);
     allPlots["nlp"+tag]     = new TH1F("nlp"+tag,";N_{l};Events" ,3,0.,3.);
     allPlots["ndilp"+tag]     = new TH1F("ndilp"+tag,";N_{ll};Events" ,3,0.,3.);
-    allPlots["nj"+tag]     = new TH1F("nj"+tag,";N_{jets};Events" ,8,2.,10.);
-    allPlots["nbj"+tag]     = new TH1F("nbj"+tag,";N_{b-jets};Events" ,4,1.,5.);
+    allPlots["nj"+tag]     = new TH1F("nj"+tag,";N_{jets} (P_{T} > 30 GeV);Events" ,8,2.,10.);
+    allPlots["nbj"+tag]     = new TH1F("nbj"+tag,";N_{b-jets} (CSV > 0.8);Events" ,4,1.,5.);
+    allPlots["npf"+tag]     = new TH1F("npf"+tag,";N_{pf};Events / 10" ,50,0.,500.);
     allPlots["nstart"+tag]     = new TH1F("nstart"+tag,";N_{start};Events" ,3,0.,5.);
     allPlots["pfid"+tag]     = new TH1F("pfid"+tag,";PFID;Events" ,440,-220.,220.);
 /*
@@ -209,8 +208,13 @@ void RunTop(TString filename,
     allPlots["massDs"+tag]     = new TH1F("massDs"+tag,";M_{D^{*}};Events / 0.1 GeV / 0.01" ,30,1.7,2.0);
     allPlots["pi_pt"+tag] = new TH1F("pi_pt"+tag,";#pi^{#pm} P_{T} [GeV];Events / 10 GeV", 15, 0,150);
     allPlots["MET"+tag] = new TH1F("MET"+tag,";MET [GeV];Events / 20 GeV", 10,0,200);
-    allPlots["charge"+tag] = new TH1F("charge"+tag,";Charge;Events", 3,-2,2);
+    allPlots["charge"+tag] = new TH1F("charge"+tag,";Charge(l_{1}*l_{2});Events", 5,-2,2);
     allPlots["dR"+tag] = new TH1F("dR"+tag,";dR;Events / 0.03", 20,0.4,1.);
+    allPlots["lep_pt"+tag+"_lcut"] = new TH1F("lep_pt"+tag+"_lcut",";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
+    allPlots["lep_pt"+tag+"_jetindex"] = new TH1F("lep_pt"+tag+"_jetindex",";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
+    allPlots["lep_pt"+tag+"_dilep"] = new TH1F("lep_pt"+tag+"_dilep",";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
+    allPlots["nlp"+tag+"_jetindex"]     = new TH1F("nlp"+tag+"_jetindex",";N_{l};Events" ,3,0.,3.);
+    allPlots["nlp"+tag+"_dilep"]     = new TH1F("nlp"+tag+"_dilep",";N_{l};Events" ,3,0.,3.);
 
   }
     allPlots["relIso_m"] = new TH1F("relIso_m",";relIso;Events / 0.05", 20,0,1.);
@@ -238,7 +242,7 @@ void RunTop(TString filename,
 
       //select 1 good lepton
       //cout << "entering lepton selection" << endl;
-      std::vector<int> tightLeptonsIso, tightLeptonsNonIso, vetoLeptons;
+      std::vector<int> tightLeptonsNonIso, vetoLeptons;
       std::vector<int> tightLeptons,looseLeptons;
       for(int il=0; il<ev.nl; il++)
 	{
@@ -412,8 +416,6 @@ void RunTop(TString filename,
 	    overlapsWithLepton=true;
           }
           if(overlapsWithLepton) continue;
-          for(size_t il=0; il<leptons.size(); il++)
-            allPlots["dR"+chTag]->Fill(jp4.DeltaR(leptons[il]),wgt);
 
 	  //smear jet energy resolution for MC
 	  //jetDiff -= jp4;
@@ -513,6 +515,19 @@ void RunTop(TString filename,
           //wgt=1.0;
 	}
 
+      for(size_t il=0; il<leptons.size(); il++) {
+        for(size_t ij=0; ij<bJets.size(); ij++) {
+	  TLorentzVector jp4;
+	  jp4.SetPtEtaPhiM(ev.j_pt[ij],ev.j_eta[ij],ev.j_phi[ij],ev.j_mass[ij]);
+          allPlots["dR"+chTag]->Fill(jp4.DeltaR(leptons[il]),wgt);
+        }
+        for(size_t ij=0; ij<lightJets.size(); ij++) {
+	  TLorentzVector jp4;
+	  jp4.SetPtEtaPhiM(ev.j_pt[ij],ev.j_eta[ij],ev.j_phi[ij],ev.j_mass[ij]);
+          allPlots["dR"+chTag]->Fill(jp4.DeltaR(leptons[il]),wgt);
+        }
+      }
+
 
       //MET and transverse mass
       TLorentzVector met(0,0,0,0);
@@ -521,17 +536,9 @@ void RunTop(TString filename,
       met.SetPz(0.); met.SetE(met.Pt());
       //float mt( computeMT(isZ ? dilp4: lp4,met) );
 
-      // Charm resonance stuff:
-      float maxcsv(-1.);
-      int maxind(-wgt);
-      for(int k = 0; k < ev.nj; k++)
-        if(ev.j_csv[k] >= maxcsv) {
-          maxcsv = ev.j_csv[k];
-          maxind = k;
-        }
-      int jetindex = maxind;
-
       //simple fill
+      bool singleLep(false);
+      bool doubleLep(false);
       if(debug) cout << "starting simple plots" << endl;
       if(selLeptons.size() == 1 && bJets.size() >= 1 && lightJets.size() >= 4) {
         singleLep = true;
@@ -589,6 +596,18 @@ void RunTop(TString filename,
 
 
       if(!singleLep && !doubleLep) continue;
+      
+      // Charm resonance stuff:
+      float maxcsv(-1.);
+      int maxind(-wgt);
+      for(int k = 0; k < ev.nj; k++)
+        if(ev.j_csv[k] >= maxcsv) {
+          maxcsv = ev.j_csv[k];
+          maxind = k;
+        }
+      int jetindex = maxind;
+      if(jetindex < 0) continue;
+
       if(debug) cout << "l or ll" << endl;
       TLorentzVector p_track1, p_track2;
       const float gMassMu = 0.1057;
@@ -596,19 +615,28 @@ void RunTop(TString filename,
       allPlots["nstart"+chTag]->Fill(nstart,wgt);
       allPlots["pfid"+chTag]->Fill(ev.pf_id[nstart],wgt);
 
+      for(int i = 0; i < ev.npf; i++) {
+        if(ev.pf_j[i] != jetindex) continue;
+        if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
+        allPlots["lep_pt"+chTag+"_lcut"]->Fill(ev.pf_pt[i],wgt);
+      }
+
       //J/Psi
       if(debug) cout << "starting J/Psi" << endl;
       for(int i = 0; i < ev.npf; i++) {
         if(ev.pf_j[i] != jetindex) continue;
+        allPlots["lep_pt"+chTag+"_jetindex"]->Fill(ev.pf_pt[i],wgt);
+        allPlots["nlp"+chTag+"_jetindex"]->Fill(1,wgt);
         if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
         for(int j = 0; j < ev.npf; j++) {
-          if(ev.pf_j[j] != jetindex) continue;
+          if(ev.pf_j[j] != ev.pf_j[i]) continue;
           /*
           if(abs(ev.pf_id[i]) !== abs(ev.pf_id[i])) continue;
           if(ev.pf_id[i]*ev.pf_id[j] > 0) continue; // e^+e^- or mu^+mu^-
           */
           if(ev.pf_id[i] != -ev.pf_id[j]) continue; // e^+e^- or mu^+mu^-
-          if(debug) cout << ev.pf_id[i] << " " << -ev.pf_id[j] << endl;
+          allPlots["lep_pt"+chTag+"_dilep"]->Fill(ev.pf_pt[i],wgt);
+          allPlots["nlp"+chTag+"_dilep"]->Fill(1,wgt);
 
           float trackmass = gMassMu;
           if(abs(ev.pf_id[j]*ev.pf_id[j]) == 121) trackmass = 0.;
