@@ -186,7 +186,7 @@ void RunTop(TString filename,
     allPlots["nj"+tag]     = new TH1F("nj"+tag,";N_{jets} (P_{T} > 30 GeV);Events" ,8,2.,10.);
     allPlots["nbj"+tag]     = new TH1F("nbj"+tag,";N_{b-jets} (CSV > 0.8);Events" ,4,1.,5.);
     allPlots["npf"+tag]     = new TH1F("npf"+tag,";N_{pf};Events / 10" ,50,0.,500.);
-    allPlots["nstart"+tag]     = new TH1F("nstart"+tag,";N_{start};Events" ,3,0.,5.);
+    allPlots["nstart"+tag]     = new TH1F("nstart"+tag,";N_{start};Events" ,5,0.,5.);
     allPlots["pfid"+tag]     = new TH1F("pfid"+tag,";PFID;Events" ,440,-220.,220.);
 /*
     allPlots["massJPsi"+tag]     = new TH1F("massJPsi"+tag,";M_{J/#Psi};Events" ,20,2.,4.);
@@ -210,11 +210,7 @@ void RunTop(TString filename,
     allPlots["MET"+tag] = new TH1F("MET"+tag,";MET [GeV];Events / 20 GeV", 10,0,200);
     allPlots["charge"+tag] = new TH1F("charge"+tag,";Charge(l_{1}*l_{2});Events", 5,-2,2);
     allPlots["dR"+tag] = new TH1F("dR"+tag,";dR;Events / 0.03", 20,0.4,1.);
-    allPlots["lep_pt"+tag+"_lcut"] = new TH1F("lep_pt"+tag+"_lcut",";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
-    allPlots["lep_pt"+tag+"_jetindex"] = new TH1F("lep_pt"+tag+"_jetindex",";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
-    allPlots["lep_pt"+tag+"_dilep"] = new TH1F("lep_pt"+tag+"_dilep",";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
-    allPlots["nlp"+tag+"_jetindex"]     = new TH1F("nlp"+tag+"_jetindex",";N_{l};Events" ,3,0.,3.);
-    allPlots["nlp"+tag+"_dilep"]     = new TH1F("nlp"+tag+"_dilep",";N_{l};Events" ,3,0.,3.);
+    allPlots["lep_pt"+tag] = new TH1F("lep_pt"+tag,";PF lepton P_{T} [GeV];Events / 20 GeV", 15, 0,300);
 
   }
     allPlots["relIso_m"] = new TH1F("relIso_m",";relIso;Events / 0.05", 20,0,1.);
@@ -598,171 +594,168 @@ void RunTop(TString filename,
       if(!singleLep && !doubleLep) continue;
       
       // Charm resonance stuff:
-      float maxcsv(-1.);
-      int maxind(-wgt);
+      float maxcsv[2] = {-wgt, -wgt};
+      int maxind[2] = {-1, -1};
       for(int k = 0; k < ev.nj; k++)
-        if(ev.j_csv[k] >= maxcsv) {
-          maxcsv = ev.j_csv[k];
-          maxind = k;
-        }
-      int jetindex = maxind;
-      if(jetindex < 0) continue;
-
-      if(debug) cout << "l or ll" << endl;
-      TLorentzVector p_track1, p_track2;
-      const float gMassMu = 0.1057;
-      int nstart = firstTrackIndex(maxind);
-      allPlots["nstart"+chTag]->Fill(nstart,wgt);
-      allPlots["pfid"+chTag]->Fill(ev.pf_id[nstart],wgt);
-
-      for(int i = 0; i < ev.npf; i++) {
-        if(ev.pf_j[i] != jetindex) continue;
-        if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
-        allPlots["lep_pt"+chTag+"_lcut"]->Fill(ev.pf_pt[i],wgt);
-      }
-
-      //J/Psi
-      if(debug) cout << "starting J/Psi" << endl;
-      for(int i = 0; i < ev.npf; i++) {
-        if(ev.pf_j[i] != jetindex) continue;
-        allPlots["lep_pt"+chTag+"_jetindex"]->Fill(ev.pf_pt[i],wgt);
-        allPlots["nlp"+chTag+"_jetindex"]->Fill(1,wgt);
-        if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
-        for(int j = 0; j < ev.npf; j++) {
-          if(ev.pf_j[j] != ev.pf_j[i]) continue;
-          /*
-          if(abs(ev.pf_id[i]) !== abs(ev.pf_id[i])) continue;
-          if(ev.pf_id[i]*ev.pf_id[j] > 0) continue; // e^+e^- or mu^+mu^-
-          */
-          if(ev.pf_id[i] != -ev.pf_id[j]) continue; // e^+e^- or mu^+mu^-
-          allPlots["lep_pt"+chTag+"_dilep"]->Fill(ev.pf_pt[i],wgt);
-          allPlots["nlp"+chTag+"_dilep"]->Fill(1,wgt);
-
-          float trackmass = gMassMu;
-          if(abs(ev.pf_id[j]*ev.pf_id[j]) == 121) trackmass = 0.;
-          p_track1.SetPtEtaPhiM(ev.pf_pt[i], ev.pf_eta[i], ev.pf_phi[i], trackmass);
-          p_track2.SetPtEtaPhiM(ev.pf_pt[j], ev.pf_eta[j], ev.pf_phi[j], trackmass);
-
-          float mass12 = (p_track1+p_track2).M();
-          //if(mass12>2.5 && mass12<3.5)
-            allPlots["massJPsi"+chTag]->Fill(mass12,wgt);
-        }
-      }
-      if(debug) cout << "J/Psi DONE" << endl;
-
-      //D0 and D* 
-      if(debug) cout << "Starting D0 and D*" << endl;
-      //vector<TLorentzVector> jets;
-      vector<pair<int,float>> jets;
-      for(int i = 0; i < ev.npf; i++) {
-        if(ev.pf_j[i] != jetindex) continue;
-        /*
-        TLorentzVector tmp_j;
-        tmp_j.SetPtEtaPhiM(ev.pf_pt[i], ev.pf_eta[i], ev.pf_phi[i], 0);
-        jets.push_back(tmp_j);
-        */
-        jets.push_back(std::make_pair(i,ev.pf_pt[i]));
-      }
-      std::sort(jets.begin(), jets.end(), sortJetTuple);
-      for(int i = 0; i < (int)jets.size(); i++)
-        if(std::get<0>(jets.at(i)) == jetindex) {
-          jetindex = i;
-          break;
-        }
-      for(int i = 0; i < (int)jets.size(); i++)
-        if(std::get<0>(jets.at(i)) == nstart) {
-          nstart = i;
-          break;
-        }
-      if(jets.size() < 3) continue;
-      if((jets.size() - nstart) < 3) continue;
-      for(int i = nstart; i < nstart+3; i++)
-      //for(int i = 0; i < 3; i++)
-        for(int j = i+1; j < 3; j++) {
-          int tk1 = get<0>(jets.at(i));
-          int tk2 = get<0>(jets.at(j));
-          if(ev.pf_j[i] != jetindex) continue;
-          if(ev.pf_j[j] != jetindex) continue;
-
-          //opposite sign
-          if(ev.pf_id[tk1]*ev.pf_id[tk2] != -211*211) continue;
-
-          const float gMassK  = 0.4937;
-          const float gMassPi = 0.1396;
-        
-          p_track1.SetPtEtaPhiM(ev.pf_pt[tk1], ev.pf_eta[tk1], ev.pf_phi[tk1], gMassPi);
-          p_track2.SetPtEtaPhiM(ev.pf_pt[tk2], ev.pf_eta[tk2], ev.pf_phi[tk2], gMassK);
-          float mass12 = (p_track1+p_track2).M();
-
-          //if (mass12>1.65 && mass12<2.0)
-            allPlots["massD0"+chTag]->Fill(mass12,wgt);
-
-          //looking for lepton
-          if(debug) cout << "third lepton" << endl;
-          //for(int tk3 = 0; tk3 < ev.npf; tk3++) {
-          for(int tk3 = 0; tk3 < (int)jets.size(); tk3++) {
-            if(ev.pf_j[tk3] != jetindex) continue;
-            if(tk3 == tk1) continue;
-            if(tk3 == tk2) continue;
-            if(debug) cout << "third lepton possible" << endl;
-          
-            if(abs(ev.pf_id[tk3]) != 13 && abs(ev.pf_id[tk3]) != 11) continue;
-            if(debug) cout << "third lepton found" << endl;
-
-            if(ev.pf_id[tk2]/abs(ev.pf_id[tk2]) == -ev.pf_id[tk3]/abs(ev.pf_id[tk3])) {
-              //Kaon and lepton have same charge
-              //correct mass assumption
-              if(debug) cout << "correct mass assumption" << endl;
-              allPlots["masslep"+chTag]->Fill(mass12,wgt);
-
-              if(abs(ev.pf_id[tk3]) == 13)
-                allPlots["massmu"+chTag]->Fill(mass12,wgt);
-              if(abs(ev.pf_id[tk3]) == 11)
-                allPlots["masse"+chTag]->Fill(mass12,wgt);
-
-            }
+        if(ev.j_csv[k] >= maxcsv[1]) {
+          if(ev.j_csv[k] >= maxcsv[0]) {
+            maxcsv[0] = ev.j_csv[k];
+            maxind[0] = k;
           }
-          //looking for pion
-          if(debug) cout << "D*->pi+D0" << endl;
-          //for(int tk3 = 0; tk3 < ev.npf; tk3++) {
-          for(int tk3 = 0; tk3 < (int)jets.size(); tk3++) {
-            if(ev.pf_j[tk3] != jetindex) continue;
-            if(tk3 == tk1) continue;
-            if(tk3 == tk2) continue;
+          else {
+            maxcsv[1] = ev.j_csv[k];
+            maxind[1] = k;
+          }
+        }
+      for(auto jetindex : maxind) {
+        //int jetindex = maxind[0];
+        if(jetindex < 0) continue;
 
-            if(abs(ev.pf_id[tk3]) != 211) continue;
-            if(debug) cout << "Pion found" << endl;
+        if(debug) cout << "l or ll" << endl;
+        TLorentzVector p_track1, p_track2;
+        const float gMassMu = 0.1057;
+        int nstart = firstTrackIndex(jetindex);
+        allPlots["nstart"+chTag]->Fill(nstart,wgt);
+        allPlots["pfid"+chTag]->Fill(ev.pf_id[nstart],wgt);
 
-            TLorentzVector p_track3, p_cand;
-            p_track3.SetPtEtaPhiM(ev.pf_pt[tk3], ev.pf_eta[tk3], ev.pf_phi[tk3], gMassPi);
-            allPlots["pi_pt"+chTag]->Fill(p_track3.Pt(),wgt);
-            if( ev.pf_id[tk2]/abs(ev.pf_id[tk2]) == -ev.pf_id[tk3]/abs(ev.pf_id[tk3]) ) {
-              // Kaon and pion have opposite charges
-              // I.e. correct mass assumption
-              if(debug) cout << "correct mass assumption" << endl;
-              
-              p_cand = p_track1+p_track2+p_track3;
-              allPlots["massDs"+chTag]->Fill(p_cand.M(), wgt);
+        //J/Psi
+        if(debug) cout << "starting J/Psi" << endl;
+        for(int i = 0; i < ev.npf; i++) {
+          if(ev.pf_j[i] != jetindex) continue;
+          allPlots["lep_pt"+chTag]->Fill(ev.pf_pt[i],wgt);
+          if(abs(ev.pf_id[i]) != 13 && abs(ev.pf_id[i]) != 11) continue;
+          for(int j = 0; j < ev.npf; j++) {
+            if(ev.pf_j[j] != ev.pf_j[i]) continue;
+            /*
+            if(abs(ev.pf_id[i]) !== abs(ev.pf_id[i])) continue;
+            if(ev.pf_id[i]*ev.pf_id[j] > 0) continue; // e^+e^- or mu^+mu^-
+            */
+            if(ev.pf_id[i] != -ev.pf_id[j]) continue; // e^+e^- or mu^+mu^-
+            allPlots["lep_pt"+chTag]->Fill(ev.pf_pt[j],wgt);
 
-              if(abs(mass12-1.864) < 0.10) { // mass window cut
-                TLorentzVector p_jet;
-                p_jet.SetPtEtaPhiM(ev.j_pt[jetindex], ev.j_eta[jetindex], ev.j_phi[jetindex], 0.);
+            float trackmass = gMassMu;
+            if(abs(ev.pf_id[j]*ev.pf_id[j]) == 121) trackmass = 0.;
+            p_track1.SetPtEtaPhiM(ev.pf_pt[i], ev.pf_eta[i], ev.pf_phi[i], trackmass);
+            p_track2.SetPtEtaPhiM(ev.pf_pt[j], ev.pf_eta[j], ev.pf_phi[j], trackmass);
 
-                //float hardpt = std::max(ev.pf_pt[tk3], std::max(ev.pf_pt[tk1], ev.pf_pt[tk2]));
-                //float softpt = std::min(ev.pf_pt[tk3], std::min(ev.pf_pt[tk1], ev.pf_pt[tk2]));
-                float deltam = p_cand.M() - mass12;
+            float mass12 = (p_track1+p_track2).M();
+            if(mass12>2.5 && mass12<3.5)
+              allPlots["massJPsi"+chTag]->Fill(mass12,wgt);
+          }
+        }
+        if(debug) cout << "J/Psi DONE" << endl;
 
-                allPlots["massDsmD0loose"+chTag]->Fill(deltam, wgt);
-                if(abs(mass12-1.864) < 0.05) { // tighter mass window cut
-                    //FillCharmTree(413,  jetindex, tk1, gMassPi, tk2, gMassK, tk3, gMassPi);
-                    //FillCharmTree(-413, jetindex, deltam, p_cand, p_jet, hardpt, softpt);
-                    allPlots["massDsmD0"+chTag]->Fill(deltam, wgt);
+        //D0 and D* 
+        if(debug) cout << "Starting D0 and D*" << endl;
+        //vector<TLorentzVector> jets;
+        vector<pair<int,float>> jets;
+        for(int i = 0; i < ev.npf; i++) {
+          if(ev.pf_j[i] != jetindex) continue;
+          jets.push_back(std::make_pair(i,ev.pf_pt[i]));
+        }
+        std::sort(jets.begin(), jets.end(), sortJetTuple);
+        for(int i = 0; i < (int)jets.size(); i++)
+          if(std::get<0>(jets.at(i)) == nstart) {
+            nstart = i;
+            break;
+          }
+        nstart = firstTrackIndex(jetindex,&jets);
+        if(jets.size() < 3) continue;
+        if((jets.size() - nstart) < 3) continue;
+        for(int i = nstart; i < nstart+3; i++)
+        //for(int i = 0; i < 3; i++)
+          for(int j = i+1; j < 3; j++) {
+            int tk1 = get<0>(jets.at(i));
+            int tk2 = get<0>(jets.at(j));
+            /*
+            int tk1 = i;
+            int tk2 = j;
+            */
+            if(ev.pf_j[tk1] != jetindex) continue;
+            if(ev.pf_j[tk2] != jetindex) continue;
+
+            //opposite sign
+            if(ev.pf_id[tk1]*ev.pf_id[tk2] != -211*211) continue;
+
+            const float gMassK  = 0.4937;
+            const float gMassPi = 0.1396;
+          
+            p_track1.SetPtEtaPhiM(ev.pf_pt[tk1], ev.pf_eta[tk1], ev.pf_phi[tk1], gMassPi);
+            p_track2.SetPtEtaPhiM(ev.pf_pt[tk2], ev.pf_eta[tk2], ev.pf_phi[tk2], gMassK);
+            float mass12 = (p_track1+p_track2).M();
+
+            //if (mass12>1.65 && mass12<2.0)
+            if (mass12>1.7 && mass12<2.0)
+              allPlots["massD0"+chTag]->Fill(mass12,wgt);
+
+            //looking for lepton
+            if(debug) cout << "third lepton" << endl;
+            //for(int tk3 = 0; tk3 < ev.npf; tk3++) {
+            for(int k = 0; k < (int)jets.size(); k++) {
+              int tk3 = get<0>(jets.at(k));
+              if(ev.pf_j[tk3] != jetindex) continue;
+              if(tk3 == tk1) continue;
+              if(tk3 == tk2) continue;
+              if(debug) cout << "third lepton possible" << endl;
+            
+              if(abs(ev.pf_id[tk3]) != 13 && abs(ev.pf_id[tk3]) != 11) continue;
+              if(debug) cout << "third lepton found" << endl;
+
+              if(ev.pf_id[tk2]/abs(ev.pf_id[tk2]) == -ev.pf_id[tk3]/abs(ev.pf_id[tk3])) {
+                //Kaon and lepton have same charge
+                //correct mass assumption
+                if(debug) cout << "correct mass assumption" << endl;
+                allPlots["masslep"+chTag]->Fill(mass12,wgt);
+
+                if(abs(ev.pf_id[tk3]) == 13)
+                  allPlots["massmu"+chTag]->Fill(mass12,wgt);
+                if(abs(ev.pf_id[tk3]) == 11)
+                  allPlots["masse"+chTag]->Fill(mass12,wgt);
+
+              }
+            }
+            //looking for pion
+            if(debug) cout << "D*->pi+D0" << endl;
+            //for(int tk3 = 0; tk3 < ev.npf; tk3++) {
+            for(int tk3 = 0; tk3 < (int)jets.size(); tk3++) {
+              if(ev.pf_j[tk3] != jetindex) continue;
+              if(tk3 == tk1) continue;
+              if(tk3 == tk2) continue;
+
+              if(abs(ev.pf_id[tk3]) != 211) continue;
+              if(debug) cout << "Pion found" << endl;
+
+              TLorentzVector p_track3, p_cand;
+              p_track3.SetPtEtaPhiM(ev.pf_pt[tk3], ev.pf_eta[tk3], ev.pf_phi[tk3], gMassPi);
+              allPlots["pi_pt"+chTag]->Fill(p_track3.Pt(),wgt);
+              if( ev.pf_id[tk2]/abs(ev.pf_id[tk2]) == -ev.pf_id[tk3]/abs(ev.pf_id[tk3]) ) {
+                // Kaon and pion have opposite charges
+                // I.e. correct mass assumption
+                if(debug) cout << "correct mass assumption" << endl;
+                
+                p_cand = p_track1+p_track2+p_track3;
+                allPlots["massDs"+chTag]->Fill(p_cand.M(), wgt);
+
+                if(abs(mass12-1.864) < 0.10) { // mass window cut
+                  TLorentzVector p_jet;
+                  p_jet.SetPtEtaPhiM(ev.j_pt[jetindex], ev.j_eta[jetindex], ev.j_phi[jetindex], 0.);
+
+                  //float hardpt = std::max(ev.pf_pt[tk3], std::max(ev.pf_pt[tk1], ev.pf_pt[tk2]));
+                  //float softpt = std::min(ev.pf_pt[tk3], std::min(ev.pf_pt[tk1], ev.pf_pt[tk2]));
+                  float deltam = p_cand.M() - mass12;
+
+                  allPlots["massDsmD0loose"+chTag]->Fill(deltam, wgt);
+                  if(abs(mass12-1.864) < 0.05) { // tighter mass window cut
+                      //FillCharmTree(413,  jetindex, tk1, gMassPi, tk2, gMassK, tk3, gMassPi);
+                      //FillCharmTree(-413, jetindex, deltam, p_cand, p_jet, hardpt, softpt);
+                      allPlots["massDsmD0"+chTag]->Fill(deltam, wgt);
+                  }
                 }
               }
             }
           }
-        }
-      if(debug) cout << "D0 and D* DONE" << endl;
+        if(debug) cout << "D0 and D* DONE" << endl;
+      }
 
     }
 

@@ -11,7 +11,7 @@ To execute in your lxplus work area.
 cmsrel CMSSW_7_6_3
 cd CMSSW_7_6_3/src
 cmsenv
-git clone git@github.com:pfs/TopLJets2015.git
+git clone git@github.com:bryates/TopLJets2015.git
 scram b -j 9
 ```
 
