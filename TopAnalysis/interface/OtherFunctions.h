@@ -18,7 +18,18 @@ int firstTrackIndex(int jetindex) {
     return result;
 }
 
-int firstTrackIndex(int jetindex, std::vector<std::pair<int,float>> *jets) {
+int firstTrackIndex(int jetindex, std::vector<std::tuple<int,float>> *jets) {
+    // Find index of the first track in this jet
+    int result = 0;
+    for (result = 0; result < (int)jets->size(); ++result) {
+        if (std::get<0>(jets->at(result))==jetindex) {
+            break; // at this point, result is correct
+        }
+    }
+    return result;
+}
+
+int firstTrackIndex(int jetindex, std::vector<std::tuple<int,float,float>> *jets) {
     // Find index of the first track in this jet
     int result = 0;
     for (result = 0; result < (int)jets->size(); ++result) {
@@ -30,6 +41,8 @@ int firstTrackIndex(int jetindex, std::vector<std::pair<int,float>> *jets) {
 }
 
 bool VecSort(TLorentzVector j1, TLorentzVector j2) { return j1.Pt() > j2.Pt(); }
-bool sortJetTuple(std::pair<int,float> i, std::pair<int,float> j) { return std::get<1>(i) > std::get<1>(j); }
+//bool sortJetTuple(std::tuple<int,float> i, std::tuple<int,float> j) { return std::get<0>(i) > std::get<0>(j); }
+bool sortJetTuple(std::tuple<int,float> i, std::tuple<int,float> j) { return std::get<0>(i) < std::get<0>(j) || ( std::get<0>(i) == std::get<0>(j) && std::get<1>(i) > std::get<1>(j) ); }
+bool sortJetCSVTuple(std::tuple<int,float,float> i, std::tuple<int,float,float> j) { return std::get<2>(i) > std::get<2>(j); }
 
 #endif

@@ -36,7 +36,7 @@ case $WHAT in
     PLOTSEL )
 	#python scripts/plotter.py -i ${outdir} --puNormSF puwgtctr  -j data/samples_Run2015.json -l ${lumi};	
 	python scripts/plotter.py -i ${outdir} -j data/samples_Run2015.json -l ${lumi};	
-	python scripts/plotter.py -i ${outdir} -j data/samples_Run2015.json -l ${lumi} --saveLog;	
+	#python scripts/plotter.py -i ${outdir} -j data/samples_Run2015.json -l ${lumi} --saveLog;	
 	;;
     WWWSEL )
 	#mkdir -p ${wwwdir}
