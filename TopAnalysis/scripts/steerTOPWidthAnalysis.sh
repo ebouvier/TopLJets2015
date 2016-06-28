@@ -41,7 +41,19 @@ case $WHAT in
     WWWSEL )
 	#mkdir -p ${wwwdir}
 	cp ${outdir}/plots/*.{png,pdf} ${wwwdir}
+	rm ${wwwdir}/*no_weight*
 	cp test/index.php ${wwwdir}
+	cp ${outdir}/plots/*_m.{png,pdf} ${wwwdir}/muon
+	cp ${outdir}/plots/*_m_*.{png,pdf} ${wwwdir}/muon
+	rm ${wwwdir}/muon/massD*
+	rm ${wwwdir}/muon/*_meson*
+	rm ${wwwdir}/muon/*dilp*
+	rm ${wwwdir}/muon/lep*
+	rm ${wwwdir}/muon/pfid*
+	rm ${wwwdir}/muon/pi_*
+	rm ${wwwdir}/muon/*no_weight*
+	rm ${wwwdir}/muon/mass[a-z]*
+	cp test/index.php ${wwwdir}/muon
 	;;
     ANA )
 	python scripts/runTopWidthAnalysis.py -i ${outdir}/Chunks -o ${outdir}/analysis -q 8nh;
