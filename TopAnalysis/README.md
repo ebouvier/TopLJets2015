@@ -2,9 +2,9 @@
 
 ## References
 
-[Official TWiki][https://twiki.cern.ch/twiki/bin/view/Main/TopLJ2015Analysis], 
-[upstream Git repository][https://github.com/bryates/TopLJets2015.git], and
-[associated plots][https://byates.web.cern.ch/byates/Top2016/2016/sel/].
+[Official TWiki](https://twiki.cern.ch/twiki/bin/view/Main/TopLJ2015Analysis), 
+[upstream Git repository](https://github.com/bryates/TopLJets2015.git), and
+[associated plots](https://byates.web.cern.ch/byates/Top2016/2016/sel/).
 
 ## Installation instructions
 
@@ -123,7 +123,7 @@ To use it you can use the following script
 ```
 sh scripts/steerTOPMassAnalysis.sh <SEL/MERGESEL/PLOTSEL/WWWSEL>
 ```
-Job status can be check with the command `bjobs`. For more details about the batch system, see the [dedicated TWiki page][https://twiki.cern.ch/twiki/bin/view/Main/BatchJobs].
+Job status can be check with the command `bjobs`. For more details about the batch system, see the [dedicated TWiki page](https://twiki.cern.ch/twiki/bin/view/Main/BatchJobs).
 
 ## Updating the code
 
