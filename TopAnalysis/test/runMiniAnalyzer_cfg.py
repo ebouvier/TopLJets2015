@@ -55,7 +55,8 @@ from TopLJets2015.TopAnalysis.Compressed_T2tt_cfi import *
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source("PoolSource",
                             #fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/TTToSemiLeptonic_13TeV_ScaleDown-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/067717F2-220A-E611-A553-0090FAA58D84.root')
-                            fileNames = cms.untracked.vstring(Compressed_T2tt_2),
+                            fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1_13TeV-powheg-pythia8-evtgen/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/A49C38B7-CF12-E611-96AF-001E67DDC254.root'),
+                            #fileNames = cms.untracked.vstring(Compressed_T2tt_2),
                             duplicateCheckMode = cms.untracked.string('noDuplicateCheck') 
                             )
 if options.runOnData:
@@ -95,22 +96,19 @@ for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
 #jet energy corrections
+import os
 process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
 from JetMETCorrections.Configuration.DefaultJEC_cff import *
 from JetMETCorrections.Configuration.JetCorrectionServices_cff import *
 from TopLJets2015.TopAnalysis.customizeJetTools_cff import *
 jecLevels=['L1FastJet','L2Relative','L3Absolute']
-jecFile='Spring16_25nsV6_MC.db'
+jecFile=os.path.expandvars("$CMSSW_BASE/src/TopLJets2015/TopAnalysis/data/era2016/Spring16_25nsV6_MC.db")
 jecTag='Spring16_25nsV6_MC_AK4PFchs'
-#jecFile='Spring16_25nsV3_MC.db'
-#jecTag='Spring16_25nsV3_MC_AK4PFchs'
 if options.runOnData : 
     print 'Warning we\'re still using Spring16 MC corrections for data - to be updated'
     jecLevels.append( 'L2L3Residual' )
-    jecFile='Spring16_25nsV6_DATA.db'
+    jecFile=os.path.expandvars("$CMSSW_BASE/src/TopLJets2015/TopAnalysis/data/era2016/Spring16_25nsV6_DATA.db")
     jecTag='Spring16_25nsV6_DATA_AK4PFchs'
-    #jecFile='Spring16_25nsV3_DATA.db'
-    #jecTag='Spring16_25nsV3_DATA_AK4PFchs'
 customizeJetTools(process=process,jecLevels=jecLevels,jecFile=jecFile,jecTag=jecTag)
 
 #tfile service

@@ -1,11 +1,13 @@
 # TopLJets2015
 
-## Analysis twiki
-Please keep 
-https://twiki.cern.ch/twiki/bin/view/Main/TopLJ2015Analysis
-up to date with the on-going tasks and results
+## References
+
+[[https://twiki.cern.ch/twiki/bin/view/Main/TopLJ2015Analysis][Official TWiki], 
+[[https://github.com/bryates/TopLJets2015.git][upstream Git repository]], and
+[[https://byates.web.cern.ch/byates/Top2016/2016/sel/][associated plost]].
 
 ## Installation instructions
+
 To execute in your lxplus work area.
 ```
 cmsrel CMSSW_8_0_11 
@@ -24,19 +26,14 @@ git cms-addpkg  TopQuarkAnalysis/TopEventProducers
 https://raw.githubusercontent.com/intrepid42/cmssw/4336e8182cab054c8383d7b4eb6622c046952711/TopQuarkAnalysis/TopEventProducers/src/PseudoTopProducer.cc
 #analysis code
 cd-
-git clone git@github.com:pfs/TopLJets2015.git
+git clone git@github.com:ebouvier/TopLJets2015.git
 cd TopLJets2015/TopAnalysis
 git checkout 80x_dev
 scram b -j 8
 ```
 
 ## Running ntuple creation
-First time create a symbolic link to the jet energy corrections files
-```
-ln -s data/era2016/Spring16_25nsV3_DATA.db
-ln -s data/era2016/Spring16_25nsV3_MC.db
-ln -s data/era2016/RoccoR_13tev.txt 
-```
+
 To run locally the ntuplizer, for testing purposes
 ```
 cmsRun test/runMiniAnalyzer_cfg.py runOnData=False/True outFilename=MiniEvents.root
@@ -118,49 +115,15 @@ To plot the output of the local analysis you can run the following:
 ```
 python scripts/plotter.py -i analysis_muplus/   -j data/era2016/samples.json  -l 12870
 ```
-After the plotters are created one can run the QCD estimation normalization, by fitting the MET distribution.
-The script will also produce the QCD templates using the data from the sideband region. It runs as
-```
-python scripts/runQCDEstimation.py --iso analysis_muplus/plots/plotter.root --noniso analysis_munoniso/plots/plotter.root --out analysis_muplus/
-```
-The output is a ROOT file called Data_QCDMultijets.root which can now be used in addition to the predictions of all the other backgrounds.
-To include it in the final plots you can run the plotter script again (see instructions above).
 
 ## Submitting the full analysis to the batch system
 
 A script wraps up the above procedure for all the signal and control regions used in the analyis.
 To use it you can use the following script
 ```
-sh scripts/steerAnalysis.sh <DISTS/MERGE/PLOT/BKG>
+sh scripts/steerTOPMassAnalysis.sh <SEL/MERGESEL/PLOTSEL/WWWSEL>
 ```
-
-## Cross section fitting
-
-We use the Higgs combination tool to perform the fit of the production cross section.
-(cf. https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideHiggsAnalysisCombinedLimit for details of the release to use).
-It currently has to be run from a CMSSW_7_1_5 release. To create the datacard you can run the following script
-```
-python scripts/createDataCard.py -i analysis_muplus/plots/plotter.root -o  analysis_muplus/datacard  -q analysis_muplus/.qcdscalefactors.pck -d nbtags
-```
-The script can be used to create the datacard from any histogram stored in plotter.root.
-For the systematic variations it expects a 2D histogram named as HISTONAMEshapes_{exp,gen} filled with alternative variations of the shape,
-being exp/gen used for experimental/generator-level systematics.
-Additional systematics from alternative samples can also be used to build the datacards using the --systInput option.
-Other options are available to choose the categories to use.
-The datacards can be further combined using the standard combineCards.py script provided by the Higgs Combination package.
-
-To run the fits and show the results you can use the following script.
-```
-python scripts/fitCrossSection.py "#mu^{+}"=analysis_muplus/datacard/datacard.dat -o analysis_muplus/datacard &
-```
-If --noFit is passed it displays the results of the last fit. The script is a wrapper used to run combine 
-to perform the fit with and without systematics, produce the post-fit nuisance parameters summary
-and the likelihood scans.
-For the standard analysis one can re-use the steerAnalysis.sh script with two options CinC/SHAPE
-will run the Cut-in-Categories/Shape analyses.
-```
-sh scripts/steerAnalysis.sh CinC/SHAPE
-```
+Job status can be check with the command `bjobs`. For more details about the batch system, see the [[https://twiki.cern.ch/twiki/bin/view/Main/BatchJobs][dedicated TWiki page]].
 
 ## Updating the code
 

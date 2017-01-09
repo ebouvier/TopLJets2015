@@ -20,9 +20,10 @@
 *.out
 *.app
 
-# emacs temporary
+# emacs/vim temporary
 *~
 *\#*
+*.swp
 
 
 # python compiled

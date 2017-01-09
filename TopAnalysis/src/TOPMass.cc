@@ -8,8 +8,7 @@
 #include <TGraphAsymmErrors.h>
 
 #include "TopLJets2015/TopAnalysis/interface/MiniEvent.h"
-#include "TopLJets2015/TopAnalysis/interface/TOP-16-006.h"
-#include "TopLJets2015/TopAnalysis/interface/TOPWidth.h"
+#include "TopLJets2015/TopAnalysis/interface/TOPMass.h"
 #include "TopLJets2015/TopAnalysis/interface/LeptonEfficiencyWrapper.h"
 #include "TopLJets2015/TopAnalysis/interface/BtagUncertaintyComputer.h"
 
@@ -17,17 +16,16 @@
 
 #include "CondFormats/BTauObjects/interface/BTagCalibration.h"
 #include "CondFormats/BTauObjects/interface/BTagCalibrationReader.h"
-//#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
-//#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
 
 #include "TopLJets2015/TopAnalysis/interface/rochcor2016.h"
+
+#include "TopQuarkAnalysis/TopTools/interface/MEzCalculator.h"
 
 #include <vector>
 #include <iostream>
 #include <algorithm>
 
 #include "TMath.h"
-#include "TopQuarkAnalysis/TopTools/interface/MEzCalculator.h"
 
 using namespace std;
 
@@ -41,15 +39,13 @@ Float_t computeMT(TLorentzVector &a, TLorentzVector &b)
 
 */
 //
-void RunTop(TString filename,
+void RunTopMass(TString filename,
 		 TString outname,
-		 Int_t channelSelection, 
 		 Int_t chargeSelection, 
-		 FlavourSplitting flavourSplitting,
 		 TH1F *normH, 
 		 Bool_t runSysts,
-                 TString era,
-                 Bool_t debug=false)
+     TString era,
+     Bool_t debug=false)
 {
   if(debug) cout << "in RunTop" << endl;
 
@@ -972,7 +968,6 @@ void RunTop(TString filename,
 
   //save histos to file  
   TString selPrefix("");  
-  if(flavourSplitting!=NOFLAVOURSPLITTING) selPrefix=Form("%d_",flavourSplitting);
   TString baseName=gSystem->BaseName(outname); 
   TString dirName=gSystem->DirName(outname);
   TFile *fOut=TFile::Open(dirName+"/"+selPrefix+baseName,"RECREATE");
