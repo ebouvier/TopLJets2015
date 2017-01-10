@@ -19,8 +19,8 @@ queue=8nh
 githash=8db9ad6
 lumi=12868.66
 lumiUnc=0.062
-#eosdir=/store/user/byates/LJets2015/${githash}
-eosdir=/store/user/byates/LJets2015/8db9ad6/MC13TeV_TTJets_powheg/MergedMiniEvents_91.root
+eosdir=/store/user/byates/LJets2015/${githash}
+#eosdir=/store/user/byates/LJets2015/8db9ad6/MC13TeV_TTJets_powheg/MergedMiniEvents_91.root
 
 case $ERA in
     era2015)
@@ -41,14 +41,14 @@ case $WHAT in
 	python scripts/runLocalAnalysis.py -i ${eosdir} -n 8 -q ${queue} -o ${outdir} --era ${ERA} -m TOPMass::RunTopMass ;
 	;;
     MERGESEL )
-	./scripts/mergeOutputs.py ${outdir}/sel True;	
+	./scripts/mergeOutputs.py ${outdir} True;	
 	;;
     PLOTSEL )
-	python scripts/plotter.py -i ${outdir}/sel --puNormSF PU_WgtCtr_all  -j data/${ERA}/samples.json -l ${lumi} --saveLog;# --mcUnc ${lumiUnc};	
+	python scripts/plotter.py -i ${outdir} --puNormSF puwgtctr  -j data/${ERA}/samples.json -l ${lumi} --saveLog;# --mcUnc ${lumiUnc};	
         #python scripts/plotter.py -i ${outdir} -j data/${ERA}/samples.json -l ${lumi};
 	;;
     WWWSEL )
-	cp -p  ${outdir}/sel/plots/*.{png,pdf} ${wwwdir}/
+	cp -p  ${outdir}/plots/*.{png,pdf} ${wwwdir}/
 	mv ${wwwdir}/*_log.{png,pdf} ${wwwdir}/log/
 	mv ${wwwdir}/*_ee*.{png,pdf} ${wwwdir}/ee/
 	mv ${wwwdir}/*_em*.{png,pdf} ${wwwdir}/em/
@@ -62,5 +62,6 @@ case $WHAT in
 	cp -p test/index.php ${wwwdir}/em/
 	cp -p test/index.php ${wwwdir}/mm/
 	cp -p test/index.php ${wwwdir}/m/
+  echo "Please visit http://ebouvier.web.cern.ch/ebouvier/Elvire/"
 	;;
 esac
