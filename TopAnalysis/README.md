@@ -124,6 +124,11 @@ To use it you can use the following script
 sh scripts/steerTOPMassAnalysis.sh <SEL/MERGESEL/PLOTSEL/WWWSEL>
 ```
 Job status can be check with the command `bjobs`. For more details about the batch system, see the [dedicated TWiki page](https://twiki.cern.ch/twiki/bin/view/Main/BatchJobs).
+Finally, to get the detailed event yields, run:
+```
+python getNumberOfEvents.py
+```
+
 
 ## Updating the code
 
