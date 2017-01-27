@@ -66,7 +66,7 @@ case $WHAT in
 	mv ${wwwdir}/check/unweighted/norm/*_mm*.{png,pdf} ${wwwdir}/check/unweighted/norm/mm/
 	mv ${wwwdir}/check/unweighted/norm/*_e*.{png,pdf} ${wwwdir}/check/unweighted/norm/e/
 	mv ${wwwdir}/check/unweighted/norm/*_m*.{png,pdf} ${wwwdir}/check/unweighted/norm/m/ 
-  mv ${wwwdir}/check/*.{png,pdf} ${wwwdir}/check/weighted/
+    mv ${wwwdir}/check/*.{png,pdf} ${wwwdir}/check/weighted/
 	mv ${wwwdir}/check/weighted/*_log*.{png,pdf} ${wwwdir}/check/weighted/log/
 	mv ${wwwdir}/check/weighted/log/*_all*.{png,pdf} ${wwwdir}/check/weighted/log/all/
 	mv ${wwwdir}/check/weighted/log/*_ee*.{png,pdf} ${wwwdir}/check/weighted/log/ee/
@@ -98,7 +98,7 @@ case $WHAT in
 	mv ${wwwdir}/topsel/unweighted/norm/*_mm*.{png,pdf} ${wwwdir}/topsel/unweighted/norm/mm/
 	mv ${wwwdir}/topsel/unweighted/norm/*_e*.{png,pdf} ${wwwdir}/topsel/unweighted/norm/e/
 	mv ${wwwdir}/topsel/unweighted/norm/*_m*.{png,pdf} ${wwwdir}/topsel/unweighted/norm/m/ 
-  mv ${wwwdir}/topsel/*.{png,pdf} ${wwwdir}/topsel/weighted/
+    mv ${wwwdir}/topsel/*.{png,pdf} ${wwwdir}/topsel/weighted/
 	mv ${wwwdir}/topsel/weighted/*_log*.{png,pdf} ${wwwdir}/topsel/weighted/log/
 	mv ${wwwdir}/topsel/weighted/log/*_all*.{png,pdf} ${wwwdir}/topsel/weighted/log/all/
 	mv ${wwwdir}/topsel/weighted/log/*_ee*.{png,pdf} ${wwwdir}/topsel/weighted/log/ee/
@@ -130,7 +130,7 @@ case $WHAT in
 	mv ${wwwdir}/jpsicand/unweighted/norm/*_mm*.{png,pdf} ${wwwdir}/jpsicand/unweighted/norm/mm/
 	mv ${wwwdir}/jpsicand/unweighted/norm/*_e*.{png,pdf} ${wwwdir}/jpsicand/unweighted/norm/e/
 	mv ${wwwdir}/jpsicand/unweighted/norm/*_m*.{png,pdf} ${wwwdir}/jpsicand/unweighted/norm/m/ 
-  mv ${wwwdir}/jpsicand/*.{png,pdf} ${wwwdir}/jpsicand/weighted/
+    mv ${wwwdir}/jpsicand/*.{png,pdf} ${wwwdir}/jpsicand/weighted/
 	mv ${wwwdir}/jpsicand/weighted/*_log*.{png,pdf} ${wwwdir}/jpsicand/weighted/log/
 	mv ${wwwdir}/jpsicand/weighted/log/*_all*.{png,pdf} ${wwwdir}/jpsicand/weighted/log/all/
 	mv ${wwwdir}/jpsicand/weighted/log/*_ee*.{png,pdf} ${wwwdir}/jpsicand/weighted/log/ee/
@@ -162,7 +162,7 @@ case $WHAT in
 	mv ${wwwdir}/d0cand/unweighted/norm/*_mm*.{png,pdf} ${wwwdir}/d0cand/unweighted/norm/mm/
 	mv ${wwwdir}/d0cand/unweighted/norm/*_e*.{png,pdf} ${wwwdir}/d0cand/unweighted/norm/e/
 	mv ${wwwdir}/d0cand/unweighted/norm/*_m*.{png,pdf} ${wwwdir}/d0cand/unweighted/norm/m/ 
-  mv ${wwwdir}/d0cand/*.{png,pdf} ${wwwdir}/d0cand/weighted/
+    mv ${wwwdir}/d0cand/*.{png,pdf} ${wwwdir}/d0cand/weighted/
 	mv ${wwwdir}/d0cand/weighted/*_log*.{png,pdf} ${wwwdir}/d0cand/weighted/log/
 	mv ${wwwdir}/d0cand/weighted/log/*_all*.{png,pdf} ${wwwdir}/d0cand/weighted/log/all/
 	mv ${wwwdir}/d0cand/weighted/log/*_ee*.{png,pdf} ${wwwdir}/d0cand/weighted/log/ee/
@@ -180,7 +180,7 @@ case $WHAT in
 
 	cp -p test/index.php ${wwwdir}/
 	
-  cp -p test/index.php ${wwwdir}/check/
+    cp -p test/index.php ${wwwdir}/check/
 	cp -p test/index.php ${wwwdir}/check/unweighted/
 	cp -p test/index.php ${wwwdir}/check/unweighted/log/
 	cp -p test/index.php ${wwwdir}/check/unweighted/log/all/
@@ -212,7 +212,7 @@ case $WHAT in
 	cp -p test/index.php ${wwwdir}/check/weighted/norm/e/
 	cp -p test/index.php ${wwwdir}/check/weighted/norm/m/
 	
-  cp -p test/index.php ${wwwdir}/topsel/
+    cp -p test/index.php ${wwwdir}/topsel/
 	cp -p test/index.php ${wwwdir}/topsel/unweighted/
 	cp -p test/index.php ${wwwdir}/topsel/unweighted/log/
 	cp -p test/index.php ${wwwdir}/topsel/unweighted/log/all/
@@ -244,7 +244,7 @@ case $WHAT in
 	cp -p test/index.php ${wwwdir}/topsel/weighted/norm/e/
 	cp -p test/index.php ${wwwdir}/topsel/weighted/norm/m/
 	
-  cp -p test/index.php ${wwwdir}/jpsicand/
+    cp -p test/index.php ${wwwdir}/jpsicand/
 	cp -p test/index.php ${wwwdir}/jpsicand/unweighted/
 	cp -p test/index.php ${wwwdir}/jpsicand/unweighted/log/
 	cp -p test/index.php ${wwwdir}/jpsicand/unweighted/log/all/
@@ -308,6 +308,6 @@ case $WHAT in
 	cp -p test/index.php ${wwwdir}/d0cand/weighted/norm/e/
 	cp -p test/index.php ${wwwdir}/d0cand/weighted/norm/m/
 
-  echo "Please visit http://ebouvier.web.cern.ch/ebouvier/Elvire/"
+    echo "Please visit http://ebouvier.web.cern.ch/ebouvier/Elvire/"
 	;;
 esac

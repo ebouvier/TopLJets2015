@@ -165,19 +165,95 @@ void RunTopMass(TString filename,
 
   allPlots["puwgtctr"] = new TH1F("puwgtctr","Weight sums",4,0,4);
 
+  /* take too much space when running over all samples
   allPlots["norm_topsel"] = new TH1F("norm_topsel",";n#sigmaL/N_{gen}; Events / 10^{-13}", 6e7,0., 6e-6); 
-  allPlots["wgt_topsel"] = new TH1F("wgt_topsel",";Weight;Events / 10^{-13}", 1e8,0., 1e-5); 
-  allPlots["sf_topsel"] = new TH1F("sf_topsel",";Scale factor; 10^{-3}", 2600,0., 2.6);
+  allPlots["wgt_topsel"] = new TH1F("wgt_topsel",";Weight;Events / 10^{-13}", 1e8,0., 1e-5);
+  */
+  allPlots["sf_topsel"] = new TH1F("sf_topsel",";Scale factor; 0.01", 260,0., 2.6);
 
   for (int k = 0; k < (int)wgtVec.size(); k++) {
     TString weight(wgtVec[k]);
+
+    allPlots["yields_all_check"+weight] = new TH1F("yields_all_check"+weight,";Event yields;Events", 7, 0., 7.);
+    allPlots["yields_all_check"+weight]->SetOption("bar");
+    allPlots["yields_all_check"+weight]->SetBarWidth(0.75);
+    allPlots["yields_all_check"+weight]->SetBarOffset(0.125);
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(1, "Starting"); 
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(2, "Trigger"); 
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(3, "Lepton(s)");
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(4, "Jets");
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(5, "b-tagging");
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(6, "MET");
+    allPlots["yields_all_check"+weight]->GetXaxis()->SetBinLabel(7, "DY vetos");
+
+    allPlots["yields_m_check"+weight] = new TH1F("yields_m_check"+weight,";Event yields;Events", 7, 0., 7.);
+    allPlots["yields_m_check"+weight]->SetOption("bar");
+    allPlots["yields_m_check"+weight]->SetBarWidth(0.75);
+    allPlots["yields_m_check"+weight]->SetBarOffset(0.125);
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(1, "Starting");
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(2, "Trigger");
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(3, "Exactly 1 tight lepton");
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(4, "... which is a #mu");
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(5, "No additional veto lepton");
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(6, "At least 4 jets with p_{T} > 30 GeV");
+    allPlots["yields_m_check"+weight]->GetXaxis()->SetBinLabel(7, "At least 1 b jet");
+
+    allPlots["yields_e_check"+weight] = new TH1F("yields_e_check"+weight,";Event yields;Events", 7, 0., 7.);
+    allPlots["yields_e_check"+weight]->SetOption("bar");
+    allPlots["yields_e_check"+weight]->SetBarWidth(0.75);
+    allPlots["yields_e_check"+weight]->SetBarOffset(0.125);
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(1, "Starting");
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(2, "Trigger");
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(3, "Exactly 1 tight lepton");
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(4, "... which is an e");
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(5, "No additional veto lepton");
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(6, "At least 4 jets with p_{T} > 30 GeV");
+    allPlots["yields_e_check"+weight]->GetXaxis()->SetBinLabel(7, "At least 1 b jet");
+
+    allPlots["yields_mm_check"+weight] = new TH1F("yields_mm_check"+weight,";Event yields;Events", 10, 0., 10.);
+    allPlots["yields_mm_check"+weight]->SetOption("bar");
+    allPlots["yields_mm_check"+weight]->SetBarWidth(0.75);
+    allPlots["yields_mm_check"+weight]->SetBarOffset(0.125);
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(1, "Starting");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(2, "Trigger");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(3, "Exactly 2 medium leptons");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(4, "... which are 2 #mu");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(5, "... oppositely charged");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(6, "At least 2 jets with p_{T} > 30 GeV");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(7, "At least 1 b jet");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(8, "MET > 40 GeV");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(9, "Z veto");
+    allPlots["yields_mm_check"+weight]->GetXaxis()->SetBinLabel(10, "Low mass resonances");
+
+    allPlots["yields_em_check"+weight] = new TH1F("yields_em_check"+weight,";Event yields;Events", 7, 0., 7.);
+    allPlots["yields_em_check"+weight]->SetOption("bar");
+    allPlots["yields_em_check"+weight]->SetBarWidth(0.75);
+    allPlots["yields_em_check"+weight]->SetBarOffset(0.125);
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(1, "Starting");
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(2, "Trigger");
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(3, "Exactly 2 medium leptons");
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(4, "... which are e#mu");
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(5, "... oppositely charged");
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(6, "At least 2 jets with p_{T} > 30 GeV");
+    allPlots["yields_em_check"+weight]->GetXaxis()->SetBinLabel(7, "At least 1 b jet");
+
+    allPlots["yields_ee_check"+weight] = new TH1F("yields_ee_check"+weight,";Event yields;Events", 10, 0., 10.);
+    allPlots["yields_ee_check"+weight]->SetOption("bar");
+    allPlots["yields_ee_check"+weight]->SetBarWidth(0.75);
+    allPlots["yields_ee_check"+weight]->SetBarOffset(0.125);
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(1, "Starting");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(2, "Trigger");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(3, "Exactly 2 medium leptons");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(4, "... which are 2 e");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(5, "... oppositely charged");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(6, "At least 2 jets with p_{T} > 30 GeV");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(7, "At least 1 b jet");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(8, "MET > 40 GeV");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(9, "Z veto");
+    allPlots["yields_ee_check"+weight]->GetXaxis()->SetBinLabel(10, "Low mass resonances");
+
     for (int i = 0; i < (int)lfsVec.size(); i++) {
       TString tag(lfsVec[i]);
-
-      allPlots["yields"+tag+"_check"+weight] = new TH1F("yields"+tag+"_check"+weight,";Event yields;Events", 10, 0., 10.);
-      allPlots["yields"+tag+"_check"+weight]->SetOption("bar");
-      allPlots["yields"+tag+"_check"+weight]->SetBarWidth(0.75);
-      allPlots["yields"+tag+"_check"+weight]->SetBarOffset(0.125);
 
       allPlots["lp_n"+tag+"_check"+weight] = new TH1F("lp_n"+tag+"_check"+weight,";Lepton multiplicity;Events", 6, 0., 6.);
       allPlots["lp_pt"+tag+"_check"+weight] = new TH1F("lp_pt"+tag+"_check"+weight,";Lepton p_{T} (GeV);Events / (5 GeV)", 40, 0., 200.);
@@ -219,6 +295,7 @@ void RunTopMass(TString filename,
       allPlots["j_csv"+tag+"_check"+weight] = new TH1F("j_csv"+tag+"_check"+weight,";Jet CSV;Events / 0.05", 20, 0., 1.);
 
       allPlots["sj_n"+tag+"_check"+weight] = new TH1F("sj_n"+tag+"_check"+weight,";Selected jet multiplicity;Events", 10, 0., 10.);
+      allPlots["sj40_n"+tag+"_check"+weight] = new TH1F("sj_n"+tag+"_check"+weight,";Selected jet multiplicity (p_{T} > 40 GeV);Events", 10, 0., 10.);
       allPlots["sj_pt"+tag+"_check"+weight] = new TH1F("sj_pt"+tag+"_check"+weight,";Selected jet p_{T} (GeV);Events / (10 GeV)", 30, 0., 300.); 
       allPlots["sj_eta"+tag+"_check"+weight] = new TH1F("sj_eta"+tag+"_check"+weight,";Selected jet #eta;Events / 0.2", 25, -2.5, 2.5);
       allPlots["sj_phi"+tag+"_check"+weight] = new TH1F("sj_phi"+tag+"_check"+weight,";Selected jet #phi;Events / 0.2", 32, -3.2, 3.2);
@@ -276,7 +353,7 @@ void RunTopMass(TString filename,
         allPlots["dilp_mass"+tag+cut+weight] = new TH1F("dilp_mass"+tag+cut+weight,";Dilepton pair mass (GeV);Events / (10 GeV)", 20, 0., 200.);
         allPlots["dilp_charge"+tag+cut+weight] = new TH1F("dilp_charge"+tag+cut+weight,";Dilepton pair charge;Events", 5, -2., 2.);
 
-        allPlots["j_n"+tag+cut+weight] = new TH1F("j_n"+tag+cut+weight,";Jet multiplicity (p_{T} > 30 GeV);Events", 10, 0., 10.);
+        allPlots["j_n"+tag+cut+weight] = new TH1F("j_n"+tag+cut+weight,";Jet multiplicity;Events", 10, 0., 10.);
         allPlots["j_pt"+tag+cut+weight] = new TH1F("j_pt"+tag+cut+weight,";p_{T}(jet) (GeV);Events / (10 GeV)", 30, 0., 300.); 
         allPlots["j_eta"+tag+cut+weight] = new TH1F("j_eta"+tag+cut+weight,";#eta(jet);Events / 0.2", 25, -2.5, 2.5);
         allPlots["j_phi"+tag+cut+weight] = new TH1F("j_phi"+tag+cut+weight,";#phi(jet);Events / 0.2", 32, -3.2, 3.2);
@@ -293,7 +370,7 @@ void RunTopMass(TString filename,
         allPlots["j2_csv"+tag+cut+weight] = new TH1F("j2_csv"+tag+cut+weight,";Subleading jet CSV discriminant;Events / 0.05", 20, 0., 1.);
         allPlots["j2_nch"+tag+cut+weight] = new TH1F("j2_nch"+tag+cut+weight,";Track multiplicity per subleading jet; Events", 50, 0., 50.);
 
-        allPlots["lj_n"+tag+cut+weight] = new TH1F("lj_n"+tag+cut+weight,";Light jet multiplicity (p_{T} > 30 GeV);Events" ,10,0,10.);
+        allPlots["lj_n"+tag+cut+weight] = new TH1F("lj_n"+tag+cut+weight,";Light jet multiplicity;Events" ,10,0,10.);
         allPlots["lj_pt"+tag+cut+weight] = new TH1F("lj_pt"+tag+cut+weight,";p_{T}(light jet) (GeV);Events / (10 GeV)", 30, 0., 300.);
         allPlots["lj_eta"+tag+cut+weight] = new TH1F("lj_eta"+tag+cut+weight,";#eta(light jet);Events / 0.2", 25, -2.5, 2.5);
         allPlots["lj_phi"+tag+cut+weight] = new TH1F("lj_phi"+tag+cut+weight,";#phi(light jet);Events / 0.2", 32, -3.2, 3.2);
@@ -388,16 +465,14 @@ void RunTopMass(TString filename,
       allPlots["yields"+tag+"_check"]->Fill((double)iCut[tag],norm);
       allPlots["yields"+tag+"_check_no_weight"]->Fill((double)iCut[tag],norm);
       ++iCut[tag];
-      allPlots["yields"+tag+"_check"]->GetXaxis()->SetBinLabel(iCut[tag], "Starting"); 
-      allPlots["yields"+tag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[tag], "Starting"); 
     }
 
-    //check if triggers have fired
-    bool hasEETrigger(((ev.elTrigger>>3)&0x1)!=0 || ((ev.elTrigger>>2)&0x1)!=0);//HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v
-    bool hasMMTrigger(((ev.muTrigger>>4)&0x3)!=0);                              //HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v && HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v
-    bool hasEMTrigger(((ev.elTrigger>>4)&0x3)!=0);                              //HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v
-    bool hasMuTrigger(((ev.muTrigger>>2)&0x3)!=0);                              //HLT_IsoMu22_v && HLT_IsoTkMu22_v
-    bool hasEleTrigger((ev.elTrigger & 0x1)!=0);                                //HLT_Ele27_WPTight_Gsf_v
+    //check if triggers have fired, see https://indico.cern.ch/event/600194/contributions/2433813/attachments/1397223/2130519/TopTriggers2016_17Jan_v2.pdf
+    bool hasEETrigger(((ev.elTrigger>>3)&0x1)!=0); //'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v'
+    bool hasMMTrigger(((ev.muTrigger>>4)&0x3)!=0); //'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v', 'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v'
+    bool hasEMTrigger(((ev.elTrigger>>4)&0x3)!=0); //'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_(DZ_)v', 'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v, 'HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_(DZ_)v
+    bool hasMuTrigger(((ev.muTrigger>>2)&0x3)!=0); //'HLT_IsoMu24_v', 'HLT_IsoTkMu24_v'
+    bool hasEleTrigger((ev.elTrigger & 0x1)!=0);   //'HLT_Ele27_WPTight_Gsf_v'
     if (!ev.isData) {	 
       hasMuTrigger=true;
       hasEleTrigger=true;
@@ -411,68 +486,56 @@ void RunTopMass(TString filename,
       if (requireMMTriggers && !hasMMTrigger) continue;
       if (requireEMTriggers && !hasEMTrigger) continue;
     }
-    if (hasMuTrigger) {
+    if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
       allPlots["yields_m_check"]->Fill((double)iCut["_m"],norm);
       allPlots["yields_m_check_no_weight"]->Fill((double)iCut["_m"],norm);
       ++iCut["_m"];
-      allPlots["yields_m_check"]->GetXaxis()->SetBinLabel(iCut["_m"], "Trigger"); 
-      allPlots["yields_m_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_m"], "Trigger");
     }
-    if (hasEleTrigger) {
+    if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
       allPlots["yields_e_check"]->Fill((double)iCut["_e"],norm);
       allPlots["yields_e_check_no_weight"]->Fill((double)iCut["_e"],norm);
       ++iCut["_e"];
-      allPlots["yields_e_check"]->GetXaxis()->SetBinLabel(iCut["_e"], "Trigger"); 
-      allPlots["yields_e_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_e"], "Trigger");
     }
-    if (hasMMTrigger) {
+    if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
       allPlots["yields_mm_check"]->Fill((double)iCut["_mm"],norm);
       allPlots["yields_mm_check_no_weight"]->Fill((double)iCut["_mm"],norm);
       ++iCut["_mm"];
-      allPlots["yields_mm_check"]->GetXaxis()->SetBinLabel(iCut["_mm"], "Trigger"); 
-      allPlots["yields_mm_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_mm"], "Trigger");
     }
-    if (hasEETrigger) {
+    if (hasEETrigger && (!ev.isData || requireEETriggers)) {
       allPlots["yields_ee_check"]->Fill((double)iCut["_ee"],norm);
       allPlots["yields_ee_check_no_weight"]->Fill((double)iCut["_ee"],norm);
       ++iCut["_ee"];
-      allPlots["yields_ee_check"]->GetXaxis()->SetBinLabel(iCut["_ee"], "Trigger"); 
-      allPlots["yields_ee_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_ee"], "Trigger");
     }
-    if (hasEMTrigger) {
+    if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
       allPlots["yields_em_check"]->Fill((double)iCut["_em"],norm);
       allPlots["yields_em_check_no_weight"]->Fill((double)iCut["_em"],norm);
       ++iCut["_em"];
-      allPlots["yields_em_check"]->GetXaxis()->SetBinLabel(iCut["_em"], "Trigger"); 
-      allPlots["yields_em_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_em"], "Trigger");
     }
     allPlots["yields_all_check"]->Fill((double)iCut["_all"],norm);
     allPlots["yields_all_check_no_weight"]->Fill((double)iCut["_all"],norm);
     ++iCut["_all"];
-    allPlots["yields_all_check"]->GetXaxis()->SetBinLabel(iCut["_all"], "Trigger"); 
-    allPlots["yields_all_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_all"], "Trigger");
 
     //select leptons
     if (debug) cout << "Starting lepton selection -- # all = " << ev.nl << endl;
 
     std::vector<int> tightLeptons, medLeptons, vetoLeptons;
-    if (hasMuTrigger) {
+    if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
       allPlots["lp_n_m_check"]->Fill(ev.nl,norm);
       allPlots["lp_n_m_check_no_weight"]->Fill(ev.nl,norm);
     }
-    if (hasEleTrigger) {
+    if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
       allPlots["lp_n_e_check"]->Fill(ev.nl,norm);
       allPlots["lp_n_e_check_no_weight"]->Fill(ev.nl,norm);
     }
-    if (hasMMTrigger) {
+    if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
       allPlots["lp_n_mm_check"]->Fill(ev.nl,norm);
       allPlots["lp_n_mm_check_no_weight"]->Fill(ev.nl,norm);
     }
-    if (hasEETrigger) {
+    if (hasEETrigger && (!ev.isData || requireEETriggers)) {
       allPlots["lp_n_ee_check"]->Fill(ev.nl,norm);
       allPlots["lp_n_ee_check_no_weight"]->Fill(ev.nl,norm);
     }
-    if (hasEMTrigger) {
+    if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
       allPlots["lp_n_em_check"]->Fill(ev.nl,norm);
       allPlots["lp_n_em_check_no_weight"]->Fill(ev.nl,norm);
     }
@@ -480,7 +543,7 @@ void RunTopMass(TString filename,
     allPlots["lp_n_all_check_no_weight"]->Fill(ev.nl,norm);
 
     for (int il=0; il<ev.nl; il++) {
-      if (hasMuTrigger) {
+      if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
         allPlots["lp_pt_m_check"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_pt_m_check_no_weight"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_eta_m_check"]->Fill(ev.l_eta[il],norm);
@@ -492,7 +555,7 @@ void RunTopMass(TString filename,
         allPlots["lp_id_m_check"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
         allPlots["lp_id_m_check_no_weight"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
       }
-      if (hasEleTrigger) {
+      if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
         allPlots["lp_pt_e_check"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_pt_e_check_no_weight"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_eta_e_check"]->Fill(ev.l_eta[il],norm);
@@ -504,7 +567,7 @@ void RunTopMass(TString filename,
         allPlots["lp_id_e_check"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
         allPlots["lp_id_e_check_no_weight"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
       }
-      if (hasMMTrigger) {
+      if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
         allPlots["lp_pt_mm_check"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_pt_mm_check_no_weight"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_eta_mm_check"]->Fill(ev.l_eta[il],norm);
@@ -516,7 +579,7 @@ void RunTopMass(TString filename,
         allPlots["lp_id_mm_check"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
         allPlots["lp_id_mm_check_no_weight"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
       }
-      if (hasEETrigger) {
+      if (hasEETrigger && (!ev.isData || requireEETriggers)) {
         allPlots["lp_pt_ee_check"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_pt_ee_check_no_weight"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_eta_ee_check"]->Fill(ev.l_eta[il],norm);
@@ -528,7 +591,7 @@ void RunTopMass(TString filename,
         allPlots["lp_id_ee_check"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
         allPlots["lp_id_ee_check_no_weight"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
       }
-      if (hasEMTrigger) {
+      if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
         allPlots["lp_pt_em_check"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_pt_em_check_no_weight"]->Fill(ev.l_pt[il],norm);
         allPlots["lp_eta_em_check"]->Fill(ev.l_eta[il],norm);
@@ -551,11 +614,17 @@ void RunTopMass(TString filename,
       allPlots["lp_id_all_check"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
       allPlots["lp_id_all_check_no_weight"]->Fill(ev.l_id[il]*ev.l_charge[il],norm);
 
+      // FIXME : to be updated with the latest recipes https://indico.cern.ch/event/600194/ 
+      /* About the content of l_pid
+       - for e : l_pid=(passVetoId | (passTightId<<1) | (passTightIdExceptIso<<2));
+       - for mu : l_pid=(isMedium | (isTight<<1));
+      */
       if (abs(ev.l_id[il]) == 13) {
         if (ev.l_pt[il] < 15.) continue;
         if (fabs(ev.l_eta[il]) > 2.4) continue;
         if (ev.l_relIso[il] < 0.25) 
           vetoLeptons.push_back(il);
+        if (!(ev.l_pid[il] &0x1)) continue;
         if (ev.l_pt[il] < 20.) continue;
         if (fabs(ev.l_eta[il]) > 2.4) continue;
         if (ev.l_relIso[il] < 0.15)
@@ -566,6 +635,7 @@ void RunTopMass(TString filename,
         if (ev.l_relIso[il] < 0.15) 
           tightLeptons.push_back(il);
       } else if (abs(ev.l_id[il]) == 11) {
+        if (!(ev.l_pid[il] &0x1)) continue;
         if (ev.l_pt[il] < 15.) continue;
         if (fabs(ev.l_eta[il]) > 2.4) continue;
         if (fabs(ev.l_eta[il]) < 2.4 && ev.l_relIso[il] < 0.15)
@@ -584,7 +654,7 @@ void RunTopMass(TString filename,
       }
     }
 
-    if (hasMuTrigger) {
+    if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
       allPlots["vlp_n_m_check"]->Fill(vetoLeptons.size(),norm);
       allPlots["vlp_n_m_check_no_weight"]->Fill(vetoLeptons.size(),norm);
       allPlots["mlp_n_m_check"]->Fill(medLeptons.size(),norm);
@@ -592,7 +662,7 @@ void RunTopMass(TString filename,
       allPlots["tlp_n_m_check"]->Fill(tightLeptons.size(),norm);
       allPlots["tlp_n_m_check_no_weight"]->Fill(tightLeptons.size(),norm);
     }
-    if (hasEleTrigger) {
+    if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
       allPlots["vlp_n_e_check"]->Fill(vetoLeptons.size(),norm);
       allPlots["vlp_n_e_check_no_weight"]->Fill(vetoLeptons.size(),norm);
       allPlots["mlp_n_e_check"]->Fill(medLeptons.size(),norm);
@@ -600,7 +670,7 @@ void RunTopMass(TString filename,
       allPlots["tlp_n_e_check"]->Fill(tightLeptons.size(),norm);
       allPlots["tlp_n_e_check_no_weight"]->Fill(tightLeptons.size(),norm);
     }
-    if (hasMMTrigger) {
+    if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
       allPlots["vlp_n_mm_check"]->Fill(vetoLeptons.size(),norm);
       allPlots["vlp_n_mm_check_no_weight"]->Fill(vetoLeptons.size(),norm);
       allPlots["mlp_n_mm_check"]->Fill(medLeptons.size(),norm);
@@ -608,7 +678,7 @@ void RunTopMass(TString filename,
       allPlots["tlp_n_mm_check"]->Fill(tightLeptons.size(),norm);
       allPlots["tlp_n_mm_check_no_weight"]->Fill(tightLeptons.size(),norm);
     }
-    if (hasEETrigger) {
+    if (hasEETrigger && (!ev.isData || requireEETriggers)) {
       allPlots["vlp_n_ee_check"]->Fill(vetoLeptons.size(),norm);
       allPlots["vlp_n_ee_check_no_weight"]->Fill(vetoLeptons.size(),norm);
       allPlots["mlp_n_ee_check"]->Fill(medLeptons.size(),norm);
@@ -616,7 +686,7 @@ void RunTopMass(TString filename,
       allPlots["tlp_n_ee_check"]->Fill(tightLeptons.size(),norm);
       allPlots["tlp_n_ee_check_no_weight"]->Fill(tightLeptons.size(),norm);
     }
-    if (hasEMTrigger) {
+    if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
       allPlots["vlp_n_em_check"]->Fill(vetoLeptons.size(),norm);
       allPlots["vlp_n_em_check_no_weight"]->Fill(vetoLeptons.size(),norm);
       allPlots["mlp_n_em_check"]->Fill(medLeptons.size(),norm);
@@ -631,7 +701,7 @@ void RunTopMass(TString filename,
     allPlots["tlp_n_all_check"]->Fill(tightLeptons.size(),norm);
     allPlots["tlp_n_all_check_no_weight"]->Fill(tightLeptons.size(),norm);
     for (size_t il = 0; il < vetoLeptons.size(); il++) {
-      if (hasMuTrigger) {
+      if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
         allPlots["vlp_pt_m_check"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_pt_m_check_no_weight"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_eta_m_check"]->Fill(ev.l_eta[vetoLeptons[il]],norm);
@@ -643,7 +713,7 @@ void RunTopMass(TString filename,
         allPlots["vlp_id_m_check"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
         allPlots["vlp_id_m_check_no_weight"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
       }
-      if (hasEleTrigger) {
+      if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
         allPlots["vlp_pt_e_check"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_pt_e_check_no_weight"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_eta_e_check"]->Fill(ev.l_eta[vetoLeptons[il]],norm);
@@ -655,7 +725,7 @@ void RunTopMass(TString filename,
         allPlots["vlp_id_e_check"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
         allPlots["vlp_id_e_check_no_weight"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
       }
-      if (hasMMTrigger) {
+      if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
         allPlots["vlp_pt_mm_check"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_pt_mm_check_no_weight"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_eta_mm_check"]->Fill(ev.l_eta[vetoLeptons[il]],norm);
@@ -667,7 +737,7 @@ void RunTopMass(TString filename,
         allPlots["vlp_id_mm_check"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
         allPlots["vlp_id_mm_check_no_weight"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
       }
-      if (hasEETrigger) {
+      if (hasEETrigger && (!ev.isData || requireEETriggers)) {
         allPlots["vlp_pt_ee_check"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_pt_ee_check_no_weight"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_eta_ee_check"]->Fill(ev.l_eta[vetoLeptons[il]],norm);
@@ -679,7 +749,7 @@ void RunTopMass(TString filename,
         allPlots["vlp_id_ee_check"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
         allPlots["vlp_id_ee_check_no_weight"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
       }
-      if (hasEMTrigger) {
+      if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
         allPlots["vlp_pt_em_check"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_pt_em_check_no_weight"]->Fill(ev.l_pt[vetoLeptons[il]],norm);
         allPlots["vlp_eta_em_check"]->Fill(ev.l_eta[vetoLeptons[il]],norm);
@@ -703,7 +773,7 @@ void RunTopMass(TString filename,
       allPlots["vlp_id_all_check_no_weight"]->Fill(ev.l_id[vetoLeptons[il]]*ev.l_charge[vetoLeptons[il]],norm);
     }
     for (size_t il = 0; il < medLeptons.size(); il++) {
-      if (hasMuTrigger) {
+      if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
         allPlots["mlp_pt_m_check"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_pt_m_check_no_weight"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_eta_m_check"]->Fill(ev.l_eta[medLeptons[il]],norm);
@@ -715,7 +785,7 @@ void RunTopMass(TString filename,
         allPlots["mlp_id_m_check"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
         allPlots["mlp_id_m_check_no_weight"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
       }
-      if (hasEleTrigger) {
+      if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
         allPlots["mlp_pt_e_check"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_pt_e_check_no_weight"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_eta_e_check"]->Fill(ev.l_eta[medLeptons[il]],norm);
@@ -727,7 +797,7 @@ void RunTopMass(TString filename,
         allPlots["mlp_id_e_check"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
         allPlots["mlp_id_e_check_no_weight"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
       }
-      if (hasMMTrigger) {
+      if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
         allPlots["mlp_pt_mm_check"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_pt_mm_check_no_weight"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_eta_mm_check"]->Fill(ev.l_eta[medLeptons[il]],norm);
@@ -739,7 +809,7 @@ void RunTopMass(TString filename,
         allPlots["mlp_id_mm_check"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
         allPlots["mlp_id_mm_check_no_weight"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
       }
-      if (hasEETrigger) {
+      if (hasEETrigger && (!ev.isData || requireEETriggers)) {
         allPlots["mlp_pt_ee_check"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_pt_ee_check_no_weight"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_eta_ee_check"]->Fill(ev.l_eta[medLeptons[il]],norm);
@@ -751,7 +821,7 @@ void RunTopMass(TString filename,
         allPlots["mlp_id_ee_check"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
         allPlots["mlp_id_ee_check_no_weight"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
       }
-      if (hasEMTrigger) {
+      if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
         allPlots["mlp_pt_em_check"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_pt_em_check_no_weight"]->Fill(ev.l_pt[medLeptons[il]],norm);
         allPlots["mlp_eta_em_check"]->Fill(ev.l_eta[medLeptons[il]],norm);
@@ -775,7 +845,7 @@ void RunTopMass(TString filename,
       allPlots["mlp_id_all_check_no_weight"]->Fill(ev.l_id[medLeptons[il]]*ev.l_charge[medLeptons[il]],norm);
     }
     for (size_t il = 0; il < tightLeptons.size(); il++) {
-      if (hasMuTrigger) {
+      if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
         allPlots["tlp_pt_m_check"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_pt_m_check_no_weight"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_eta_m_check"]->Fill(ev.l_eta[tightLeptons[il]],norm);
@@ -787,7 +857,7 @@ void RunTopMass(TString filename,
         allPlots["tlp_id_m_check"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
         allPlots["tlp_id_m_check_no_weight"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
       }
-      if (hasEleTrigger) {
+      if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
         allPlots["tlp_pt_e_check"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_pt_e_check_no_weight"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_eta_e_check"]->Fill(ev.l_eta[tightLeptons[il]],norm);
@@ -799,7 +869,7 @@ void RunTopMass(TString filename,
         allPlots["tlp_id_e_check"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
         allPlots["tlp_id_e_check_no_weight"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
       }
-      if (hasMMTrigger) {
+      if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
         allPlots["tlp_pt_mm_check"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_pt_mm_check_no_weight"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_eta_mm_check"]->Fill(ev.l_eta[tightLeptons[il]],norm);
@@ -811,7 +881,7 @@ void RunTopMass(TString filename,
         allPlots["tlp_id_mm_check"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
         allPlots["tlp_id_mm_check_no_weight"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
       }
-      if (hasEETrigger) {
+      if (hasEETrigger && (!ev.isData || requireEETriggers)) {
         allPlots["tlp_pt_ee_check"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_pt_ee_check_no_weight"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_eta_ee_check"]->Fill(ev.l_eta[tightLeptons[il]],norm);
@@ -823,7 +893,7 @@ void RunTopMass(TString filename,
         allPlots["tlp_id_ee_check"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
         allPlots["tlp_id_ee_check_no_weight"]->Fill(ev.l_id[tightLeptons[il]]*ev.l_charge[tightLeptons[il]],norm);
       }
-      if (hasEMTrigger) {
+      if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
         allPlots["tlp_pt_em_check"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_pt_em_check_no_weight"]->Fill(ev.l_pt[tightLeptons[il]],norm);
         allPlots["tlp_eta_em_check"]->Fill(ev.l_eta[tightLeptons[il]],norm);
@@ -853,75 +923,57 @@ void RunTopMass(TString filename,
     if (debug) cout << "Decide channel" << endl;
     TString chTag("");
     std::vector<int> selLeptons;
-    if (hasMuTrigger) {
+    if (hasMuTrigger && (!ev.isData || requireMutriggerOnly)) {
       if (tightLeptons.size() == 1) {
         allPlots["yields_m_check"]->Fill((double)iCut["_m"],norm);
         allPlots["yields_m_check_no_weight"]->Fill((double)iCut["_m"],norm);
         ++iCut["_m"];
-        allPlots["yields_m_check"]->GetXaxis()->SetBinLabel(iCut["_m"], "Exactly 1 tight lepton"); 
-        allPlots["yields_m_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_m"], "Exactly 1 tight lepton");
         if (abs(ev.l_id[tightLeptons[0]]) == 13) {
           allPlots["yields_m_check"]->Fill((double)iCut["_m"],norm);
           allPlots["yields_m_check_no_weight"]->Fill((double)iCut["_m"],norm);
           ++iCut["_m"];
-          allPlots["yields_m_check"]->GetXaxis()->SetBinLabel(iCut["_m"], "... which is a #mu"); 
-          allPlots["yields_m_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_m"], "... which is a #mu");
           if (vetoLeptons.size() == 1 && vetoLeptons[0] == tightLeptons[0]) {
             allPlots["yields_m_check"]->Fill((double)iCut["_m"],norm);
             allPlots["yields_m_check_no_weight"]->Fill((double)iCut["_m"],norm);
             ++iCut["_m"];
-            allPlots["yields_m_check"]->GetXaxis()->SetBinLabel(iCut["_m"], "No additional veto lepton"); 
-            allPlots["yields_m_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_m"], "No additional veto lepton");
             chTag = "m";
             selLeptons.push_back(tightLeptons[0]);
           }
         }
       }
     }
-    if (hasEleTrigger) {
+    if (hasEleTrigger && (!ev.isData || requireEletriggerOnly)) {
       if (tightLeptons.size() == 1) {
         allPlots["yields_e_check"]->Fill((double)iCut["_e"],norm);
         allPlots["yields_e_check_no_weight"]->Fill((double)iCut["_e"],norm);
         ++iCut["_e"];
-        allPlots["yields_e_check"]->GetXaxis()->SetBinLabel(iCut["_e"], "Exactly 1 tight lepton"); 
-        allPlots["yields_e_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_e"], "Exactly 1 tight lepton");
         if (abs(ev.l_id[tightLeptons[0]]) == 11) {
           allPlots["yields_e_check"]->Fill((double)iCut["_e"],norm);
           allPlots["yields_e_check_no_weight"]->Fill((double)iCut["_e"],norm);
           ++iCut["_e"];
-          allPlots["yields_e_check"]->GetXaxis()->SetBinLabel(iCut["_e"], "... which is an e"); 
-          allPlots["yields_e_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_e"], "... which is an e");
           if (vetoLeptons.size() == 1 && vetoLeptons[0] == tightLeptons[0]) {
             allPlots["yields_e_check"]->Fill((double)iCut["_e"],norm);
             allPlots["yields_e_check_no_weight"]->Fill((double)iCut["_e"],norm);
             ++iCut["_e"];
-            allPlots["yields_e_check"]->GetXaxis()->SetBinLabel(iCut["_e"], "No additional veto lepton"); 
-            allPlots["yields_e_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_e"], "No additional veto lepton");
             chTag = "e";
             selLeptons.push_back(tightLeptons[0]);
           }
         }
       }
     }
-    if (hasMMTrigger) {
+    if (hasMMTrigger && (!ev.isData || requireMMTriggers)) {
       if (medLeptons.size() >= 2) {
         allPlots["yields_mm_check"]->Fill((double)iCut["_mm"],norm);
         allPlots["yields_mm_check_no_weight"]->Fill((double)iCut["_mm"],norm);
         ++iCut["_mm"];
-        allPlots["yields_mm_check"]->GetXaxis()->SetBinLabel(iCut["_mm"], "Exactly 2 medium leptons"); 
-        allPlots["yields_mm_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_mm"], "Exactly 2 medium leptons");
         if (abs(ev.l_id[medLeptons[0]]) == 13 && abs(ev.l_id[medLeptons[1]]) == 13) {
           allPlots["yields_mm_check"]->Fill((double)iCut["_mm"],norm);
           allPlots["yields_mm_check_no_weight"]->Fill((double)iCut["_mm"],norm);
           ++iCut["_mm"];
-          allPlots["yields_mm_check"]->GetXaxis()->SetBinLabel(iCut["_mm"], "... which are 2 #mu"); 
-          allPlots["yields_mm_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_mm"], "... which are 2 #mu");
           if (ev.l_charge[medLeptons[0]]*ev.l_charge[medLeptons[1]] < 0.) {
             allPlots["yields_mm_check"]->Fill((double)iCut["_mm"],norm);
             allPlots["yields_mm_check_no_weight"]->Fill((double)iCut["_mm"],norm);
             ++iCut["_mm"];
-            allPlots["yields_mm_check"]->GetXaxis()->SetBinLabel(iCut["_mm"], "... oppositely charged"); 
-            allPlots["yields_mm_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_mm"], "... oppositely charged");
             chTag = "mm";
             selLeptons.push_back(medLeptons[0]);
             selLeptons.push_back(medLeptons[1]);
@@ -929,25 +981,19 @@ void RunTopMass(TString filename,
         }
       }
     }
-    if (hasEETrigger) {
+    if (hasEETrigger && (!ev.isData || requireEETriggers)) {
       if (medLeptons.size() >= 2) {
         allPlots["yields_ee_check"]->Fill((double)iCut["_ee"],norm);
         allPlots["yields_ee_check_no_weight"]->Fill((double)iCut["_ee"],norm);
         ++iCut["_ee"];
-        allPlots["yields_ee_check"]->GetXaxis()->SetBinLabel(iCut["_ee"], "Exactly 2 medium leptons"); 
-        allPlots["yields_ee_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_ee"], "Exactly 2 medium leptons");
-        if (abs(ev.l_id[medLeptons[0]]) == 11 && abs(ev.l_id[medLeptons[1]]) == 11) {
+        if (abs(ev.l_id[medLeptons[0]]) == 11 && abs(ev.l_id[medLeptons[1]]) == 11 && ev.l_pt[medLeptons[0]] > 25.) { // to be consistent with the trigger
           allPlots["yields_ee_check"]->Fill((double)iCut["_ee"],norm);
           allPlots["yields_ee_check_no_weight"]->Fill((double)iCut["_ee"],norm);
           ++iCut["_ee"];      
-          allPlots["yields_ee_check"]->GetXaxis()->SetBinLabel(iCut["_ee"], "... which are 2 e"); 
-          allPlots["yields_ee_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_ee"], "... which are 2 e");
           if (ev.l_charge[medLeptons[0]]*ev.l_charge[medLeptons[1]] < 0.) {
             allPlots["yields_ee_check"]->Fill((double)iCut["_ee"],norm);
             allPlots["yields_ee_check_no_weight"]->Fill((double)iCut["_ee"],norm);
             ++iCut["_ee"];      
-            allPlots["yields_ee_check"]->GetXaxis()->SetBinLabel(iCut["_ee"], "... oppositely charged"); 
-            allPlots["yields_ee_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_ee"], "... oppositely charged");
             chTag = "ee";
             selLeptons.push_back(medLeptons[0]);
             selLeptons.push_back(medLeptons[1]);
@@ -955,26 +1001,20 @@ void RunTopMass(TString filename,
         }
       }
     }
-    if (hasEMTrigger) {
+    if (hasEMTrigger && (!ev.isData || requireEMTriggers)) {
       if (medLeptons.size() >= 2) {
         allPlots["yields_em_check"]->Fill((double)iCut["_em"],norm);
         allPlots["yields_em_check_no_weight"]->Fill((double)iCut["_em"],norm);
         ++iCut["_em"];
-        allPlots["yields_em_check"]->GetXaxis()->SetBinLabel(iCut["_em"], "Exactly 2 medium leptons"); 
-        allPlots["yields_em_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_em"], "Exactly 2 medium leptons");
-        if ((abs(ev.l_id[medLeptons[0]]) == 11 && abs(ev.l_id[medLeptons[1]]) == 13)
-            || (abs(ev.l_id[medLeptons[0]]) == 13 && abs(ev.l_id[medLeptons[1]]) == 11)) {
+        if ((abs(ev.l_id[medLeptons[0]]) == 11 && abs(ev.l_id[medLeptons[1]]) == 13 && ev.l_pt[medLeptons[0]] > 25.)
+            || (abs(ev.l_id[medLeptons[0]]) == 13 && abs(ev.l_id[medLeptons[1]]) == 11 && ev.l_pt[medLeptons[1]] > 25.)) { // to be consistent with the trigger
           allPlots["yields_em_check"]->Fill((double)iCut["_em"],norm);
           allPlots["yields_em_check_no_weight"]->Fill((double)iCut["_em"],norm);
           ++iCut["_em"];      
-          allPlots["yields_em_check"]->GetXaxis()->SetBinLabel(iCut["_em"], "... which are e#mu"); 
-          allPlots["yields_em_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_em"], "... which are e#mu");
           if (ev.l_charge[medLeptons[0]]*ev.l_charge[medLeptons[1]] < 0.) {
             allPlots["yields_em_check"]->Fill((double)iCut["_em"],norm);
             allPlots["yields_em_check_no_weight"]->Fill((double)iCut["_em"],norm);
             ++iCut["_em"];      
-            allPlots["yields_em_check"]->GetXaxis()->SetBinLabel(iCut["_em"], "... oppositely charged"); 
-            allPlots["yields_em_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_em"], "... oppositely charged");
             chTag = "em";
             selLeptons.push_back(medLeptons[0]);
             selLeptons.push_back(medLeptons[1]);
@@ -1047,8 +1087,6 @@ void RunTopMass(TString filename,
     allPlots["yields_all_check"]->Fill((double)iCut["_all"],wgt);
     allPlots["yields_all_check_no_weight"]->Fill((double)iCut["_all"],norm);
     ++iCut["_all"];
-    allPlots["yields_all_check"]->GetXaxis()->SetBinLabel(iCut["_all"], "Lepton(s)"); 
-    allPlots["yields_all_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_all"], "Lepton(s)");
 
     allPlots["slp_n"+chTag+"_check"]->Fill(leptons.size(),wgt);
     allPlots["slp_n"+chTag+"_check_no_weight"]->Fill(leptons.size(),norm);
@@ -1077,6 +1115,7 @@ void RunTopMass(TString filename,
     std::vector<int> resolvedJetIdx;
     std::vector<TLorentzVector> resolvedJetP4;
     std::vector<Jet> bJetsVec, lightJetsVec, allJetsVec;
+    int nJet40 = 0;
     allPlots["j_n"+chTag+"_check"]->Fill(ev.nj,wgt);
     allPlots["j_n"+chTag+"_check_no_weight"]->Fill(ev.nj,norm);
     allPlots["j_n_all_check"]->Fill(ev.nj,wgt);
@@ -1126,8 +1165,9 @@ void RunTopMass(TString filename,
       resolvedJetP4.push_back(jp4);
 
       // re-inforce kinematics cuts
-      if (jp4.Pt() < 30) continue;
+      if (jp4.Pt() < 30.) continue;
       if (fabs(jp4.Eta()) > 2.4) continue;
+      if (jp4.Pt() > 40.) ++nJet40;
 
       //b-tag
       if (debug) cout << "Starting b-tagging" << endl;
@@ -1186,27 +1226,25 @@ void RunTopMass(TString filename,
       allPlots["yields"+chTag+"_check"]->Fill((double)iCut[chTag],wgt);
       allPlots["yields"+chTag+"_check_no_weight"]->Fill((double)iCut[chTag],norm);
       ++iCut[chTag];
-      allPlots["yields"+chTag+"_check"]->GetXaxis()->SetBinLabel(iCut[chTag], "At least 4 jets"); 
-      allPlots["yields"+chTag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[chTag], "At least 4 jets");
     }
     if (selLeptons.size() == 2) {
       if (allJetsVec.size() < 2) continue;
       allPlots["yields"+chTag+"_check"]->Fill((double)iCut[chTag],wgt);
       allPlots["yields"+chTag+"_check_no_weight"]->Fill((double)iCut[chTag],norm);
       ++iCut[chTag];
-      allPlots["yields"+chTag+"_check"]->GetXaxis()->SetBinLabel(iCut[chTag], "At least 2 jets"); 
-      allPlots["yields"+chTag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[chTag], "At least 2 jets");
     }
     allPlots["yields_all_check"]->Fill((double)iCut["_all"],wgt);
     allPlots["yields_all_check_no_weight"]->Fill((double)iCut["_all"],norm);
     ++iCut["_all"];
-    allPlots["yields_all_check"]->GetXaxis()->SetBinLabel(iCut["_all"], "Jets"); 
-    allPlots["yields_all_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_all"], "Jets");
 
     allPlots["sj_n"+chTag+"_check"]->Fill(allJetsVec.size(),wgt);
     allPlots["sj_n"+chTag+"_check_no_weight"]->Fill(allJetsVec.size(),norm);
     allPlots["sj_n_all_check"]->Fill(allJetsVec.size(),wgt);
     allPlots["sj_n_all_check_no_weight"]->Fill(allJetsVec.size(),norm);
+    allPlots["sj40_n"+chTag+"_check"]->Fill(nJet40,wgt);
+    allPlots["sj40_n"+chTag+"_check_no_weight"]->Fill(nJet40,norm);
+    allPlots["sj40_n_all_check"]->Fill(nJet40,wgt);
+    allPlots["sj40_n_all_check_no_weight"]->Fill(nJet40,norm);
     for (size_t ij = 0; ij < allJetsVec.size(); ij++) {
       allPlots["sj_pt"+chTag+"_check"]->Fill(allJetsVec[ij].getVec().Pt(),wgt);
       allPlots["sj_pt"+chTag+"_check_no_weight"]->Fill(allJetsVec[ij].getVec().Pt(),norm);
@@ -1253,13 +1291,9 @@ void RunTopMass(TString filename,
     allPlots["yields"+chTag+"_check"]->Fill((double)iCut[chTag],wgt);
     allPlots["yields"+chTag+"_check_no_weight"]->Fill((double)iCut[chTag],norm);
     ++iCut[chTag];
-    allPlots["yields"+chTag+"_check"]->GetXaxis()->SetBinLabel(iCut[chTag], "At least 1 b jet"); 
-    allPlots["yields"+chTag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[chTag], "At least 1 b jet");
     allPlots["yields_all_check"]->Fill((double)iCut["_all"],wgt);
     allPlots["yields_all_check_no_weight"]->Fill((double)iCut["_all"],norm);
     ++iCut["_all"];
-    allPlots["yields_all_check"]->GetXaxis()->SetBinLabel(iCut["_all"], "b-tagging"); 
-    allPlots["yields_all_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_all"], "b-tagging");
 
     allPlots["sbj_n"+chTag+"_check"]->Fill(bJetsVec.size(),wgt);
     allPlots["sbj_n"+chTag+"_check_no_weight"]->Fill(bJetsVec.size(),norm);
@@ -1303,7 +1337,7 @@ void RunTopMass(TString filename,
 
     //MET and transverse mass
     TLorentzVector met(0,0,0,0);
-    met.SetPtEtaPhiM(ev.met_pt[0],0,ev.met_phi[0],0.); // FIXME index 1 for PUPPI MET ?
+    met.SetPtEtaPhiM(ev.met_pt[0],0,ev.met_phi[0],0.); // index 1 for PUPPI MET, but considered as experimental, see slide 8 of https://indico.cern.ch/event/600194/contributions/2423592/attachments/1397230/2130535/2017.01.17_TOP_JetMET-object-review_v3.pdf
     met+=jetDiff;
     met.SetPz(0.); met.SetE(met.Pt());
     allPlots["met"+chTag+"_check"]->Fill(met.Pt(),wgt);
@@ -1318,15 +1352,11 @@ void RunTopMass(TString filename,
       allPlots["yields"+chTag+"_check"]->Fill((double)iCut[chTag],wgt);
       allPlots["yields"+chTag+"_check_no_weight"]->Fill((double)iCut[chTag],norm);
       ++iCut[chTag];
-      allPlots["yields"+chTag+"_check"]->GetXaxis()->SetBinLabel(iCut[chTag], "MET > 40 GeV"); 
-      allPlots["yields"+chTag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[chTag], "MET > 40 GeV");
       if (debug) cout << "MET cut PASSED" << endl;
     }
     allPlots["yields_all_check"]->Fill((double)iCut["_all"],wgt);
     allPlots["yields_all_check_no_weight"]->Fill((double)iCut["_all"],norm);
     ++iCut["_all"];
-    allPlots["yields_all_check"]->GetXaxis()->SetBinLabel(iCut["_all"], "MET"); 
-    allPlots["yields_all_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_all"], "MET");
     if (selLeptons.size() == 2 && abs(ev.l_id[selLeptons[0]]) == abs(ev.l_id[selLeptons[1]]) && ev.l_charge[selLeptons[0]]*ev.l_charge[selLeptons[1]] < 0) {	  
       TLorentzVector l1p4, l2p4, dilp4;
       l1p4.SetPtEtaPhiM(ev.l_pt[selLeptons[0]],ev.l_eta[selLeptons[0]],ev.l_phi[selLeptons[0]],ev.l_mass[selLeptons[0]]);
@@ -1344,25 +1374,21 @@ void RunTopMass(TString filename,
       allPlots["yields"+chTag+"_check"]->Fill((double)iCut[chTag],wgt);
       allPlots["yields"+chTag+"_check_no_weight"]->Fill((double)iCut[chTag],norm);
       ++iCut[chTag];
-      allPlots["yields"+chTag+"_check"]->GetXaxis()->SetBinLabel(iCut[chTag], "Z veto"); 
-      allPlots["yields"+chTag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[chTag], "Z veto");
       if (dilp4.M() < 20.) continue;
       if (debug) cout << "Low mass cut PASSED" << endl;
       allPlots["yields"+chTag+"_check"]->Fill((double)iCut[chTag],wgt);
       allPlots["yields"+chTag+"_check_no_weight"]->Fill((double)iCut[chTag],norm);
       ++iCut[chTag];
-      allPlots["yields"+chTag+"_check"]->GetXaxis()->SetBinLabel(iCut[chTag], "Low mass resonances"); 
-      allPlots["yields"+chTag+"_check_no_weight"]->GetXaxis()->SetBinLabel(iCut[chTag], "Low mass resonances");
     }
     allPlots["yields_all_check"]->Fill((double)iCut["_all"],wgt);
     allPlots["yields_all_check_no_weight"]->Fill((double)iCut["_all"],norm);
     ++iCut["_all"];
-    allPlots["yields_all_check"]->GetXaxis()->SetBinLabel(iCut["_all"], "DY vetos"); 
-    allPlots["yields_all_check_no_weight"]->GetXaxis()->SetBinLabel(iCut["_all"], "DY vetos");
 
     if (!ev.isData) {
+      /*
       allPlots["norm_topsel"]->Fill(norm);
       allPlots["wgt_topsel"]->Fill(wgt);
+      */
       if (fabs(norm) > 1e-15)
         allPlots["sf_topsel"]->Fill(wgt/norm);
     }
@@ -2006,7 +2032,7 @@ void RunTopMass(TString filename,
           if (debug) cout << i << ": " << tracks[i].first.Pt() << " " << tracks[i].first.Eta() << " " << tracks[i].first.Phi() << " " << gMassPi << endl;
           if (debug) cout << j << ": " << tracks[j].first.Pt() << " " << tracks[j].first.Eta() << " " << tracks[j].first.Phi() << " " << gMassK << endl << endl;
 
-          if ((p_track1+p_track2).Pt() < 12.) continue; // FIXME : to be optimized
+          if ((p_track1+p_track2).Pt() < 10.) continue; // FIXME : to be optimized
 
           float mass12 = (p_track1+p_track2).M();
           if (debug) cout << mass12 << endl;

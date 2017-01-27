@@ -58,22 +58,22 @@ for hYield in hYields:
     hData = rootFile.Get("%s/%s" % (nYield, nYield))
     cut = 1
     while hData.GetBinContent(cut) > 0:
-        tex.write("%s & " % (hData.GetXaxis().GetBinLabel(cut)).replace("#mu","$\\mu$").replace("+","$+$").replace(">","$>$"))
+        tex.write("%s & " % (hData.GetXaxis().GetBinLabel(cut)).replace("#mu","$\\mu$").replace("+","$+$").replace(">","$>$")).replace("p_{T}","$p_\\text{T}$")
         wTot = 0
         uTot = 0
         for process in procMC:
             wMC =rootFile.Get("%s/%s_%s" % (nYield, nYield, process[1]))
             uMC =rootFile.Get("%s_no_weight/%s_no_weight_%s" % (nYield, nYield, process[1]))
             if abs(wMC.GetBinContent(cut) - uMC.GetBinContent(cut)) > 1e-6:
-                tex.write(("$%.2e}$ & ($%.2e}$) & " % (wMC.GetBinContent(cut), uMC.GetBinContent(cut))).replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
+                tex.write(("$%.2e}$ & ($%.2e}$) & " % (max(wMC.GetBinContent(cut),0), max(uMC.GetBinContent(cut),0))).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
             else :
-                tex.write((" & ($%.2e}$) & " % uMC.GetBinContent(cut)).replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
-            wTot = wTot + wMC.GetBinContent(cut) 
-            uTot = uTot + uMC.GetBinContent(cut) 
+                tex.write((" & ($%.2e}$) & " % uMC.GetBinContent(cut)).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
+            wTot = wTot + max(wMC.GetBinContent(cut),0) 
+            uTot = uTot + max(uMC.GetBinContent(cut),0) 
         if abs(wTot - uTot) > 1e-6:
-            tex.write(("$%.2e}$ & ($%.2e}$) & " % (wTot, uTot)).replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
+            tex.write(("$%.2e}$ & ($%.2e}$) & " % (wTot, uTot)).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
         else :
-            tex.write((" & ($%.2e}$) & " % uTot).replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
+            tex.write((" & ($%.2e}$) & " % uTot).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
         tex.write(("$%.2e}$ \\\\ \n" % hData.GetBinContent(cut)).replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-"))
         cut = cut+1
     tex.write("\\end{tabular}\n")
@@ -106,7 +106,7 @@ for hYield in hYields:
     hData = rootFile.Get("%s/%s" % (nYield, nYield))
     cut = 2
     while hData.GetBinContent(cut) > 0:
-        tex.write("%s & " % (hData.GetXaxis().GetBinLabel(cut)).replace("#mu","$\\mu$").replace("+","$+$").replace(">","$>$"))
+        tex.write("%s & " % (hData.GetXaxis().GetBinLabel(cut)).replace("#mu","$\\mu$").replace("+","$+$").replace(">","$>$")).replace("p_{T}","$p_\\text{T}$")
         wNum = 0
         uNum = 0
         wDen = 0
@@ -114,8 +114,8 @@ for hYield in hYields:
         for process in procMC:
             wMC =rootFile.Get("%s/%s_%s" % (nYield, nYield, process[1]))
             uMC =rootFile.Get("%s_no_weight/%s_no_weight_%s" % (nYield, nYield, process[1]))
-            if wMC.GetBinContent(cut-1) > 0 :
-                if uMC.GetBinContent(cut-1) > 0 :
+            if wMC.GetBinContent(cut-1) > 0 and  wMC.GetBinContent(cut) > 0 :
+                if uMC.GetBinContent(cut-1) > 0 and uMC.GetBinContent(cut) > 0 :
                     wEff = 100*wMC.GetBinContent(cut)/wMC.GetBinContent(cut-1)
                     uEff = 100*uMC.GetBinContent(cut)/uMC.GetBinContent(cut-1)
                     if abs(wEff - uEff) > 1e-15:
@@ -126,15 +126,15 @@ for hYield in hYields:
                     wEff = 100*wMC.GetBinContent(cut)/wMC.GetBinContent(cut-1)
                     tex.write("$%.1f$ & -- & " % wEff)
             else :
-                if uMC.GetBinContent(cut-1) > 0 :
+                if uMC.GetBinContent(cut-1) > 0  and uMC.GetBinContent(cut) > 0 :
                     uEff = 100*uMC.GetBinContent(cut)/uMC.GetBinContent(cut-1)
                     tex.write(" -- & $%.1f$ & " % uEff)
                 else :        
                     tex.write(" -- & -- & ")
-            wNum = wNum + wMC.GetBinContent(cut) 
-            uNum = uNum + uMC.GetBinContent(cut) 
-            wDen = wDen + wMC.GetBinContent(cut-1) 
-            uDen = uDen + uMC.GetBinContent(cut-1) 
+            wNum = wNum + max(0,wMC.GetBinContent(cut)) 
+            uNum = uNum + max(0,uMC.GetBinContent(cut))
+            wDen = wDen + max(0,wMC.GetBinContent(cut-1)) 
+            uDen = uDen + max(0,uMC.GetBinContent(cut-1)) 
         if wDen > 0 :    
             if uDen > 0 :
                 wTot = 100*wNum/wDen
@@ -199,13 +199,13 @@ for hDecay in hDecays:
         tW = 0
         tU = 0
         while decay < wMC.GetNbinsX()+1:
-            tex.write(("$%.2e}$ & ($%.2e}$) & " % (wMC.GetBinContent(decay), uMC.GetBinContent(decay))).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
-            tW = tW+wMC.GetBinContent(decay)
-            tU = tU+uMC.GetBinContent(decay)
+            tex.write(("$%.2e}$ & ($%.2e}$) & " % (max(0,wMC.GetBinContent(decay)), max(0,uMC.GetBinContent(decay)))).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
+            tW = tW+max(0,wMC.GetBinContent(decay))
+            tU = tU+max(0,uMC.GetBinContent(decay))
             decay = decay+1
         tex.write(("$%.2e}$ & ($%.2e}$) \\\\ \n " % (tW, tU)).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
 
-    tex.write("\\hline\\hline\n")
+    tex.write("\\hline\n")
     tex.write("Total MC & ")
     decay = 1
     tW = 0
@@ -216,8 +216,8 @@ for hDecay in hDecays:
         for process in procMC:
             wMC =rootFile.Get("%s/%s_%s" % (nDecay, nDecay, process[1]))
             uMC =rootFile.Get("%s_no_weight/%s_no_weight_%s" % (nDecay, nDecay, process[1]))
-            wTot = wTot + wMC.GetBinContent(decay)
-            uTot = uTot + uMC.GetBinContent(decay)
+            wTot = wTot + max(0,wMC.GetBinContent(decay))
+            uTot = uTot + max(0,uMC.GetBinContent(decay))
         tex.write(("$%.2e}$ & ($%.2e}$) & " % (wTot, uTot)).replace("0.00e+00","\\text{negligible}{").replace("e+0","\\cdot10^{").replace("e-0","\\cdot10^{-").replace("e+","\\cdot10^{").replace("e-","\\cdot10^{-"))
         tW = tW+wTot
         tU = tU+uTot
